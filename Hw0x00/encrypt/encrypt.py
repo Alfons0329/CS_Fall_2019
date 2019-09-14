@@ -54,7 +54,9 @@ def encrypt(m, key):
 
 if __name__ == '__main__':
     flag = open('flag', 'rb').read()
+    print(len(flag))
     assert(len(flag) == 16)
+
     key = open('key', 'rb').read()
     assert(E ** ( I * pi ) + len(key) == 0)
-    open('cipher', 'wb').write(encrypt(flag, int.from_bytes(key, 'little')))
+    open('cipher_2', 'wb').write(encrypt(flag, int.from_bytes(key, 'little')))

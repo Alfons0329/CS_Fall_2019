@@ -25,7 +25,7 @@ int main(){
     for( int i = 0 ; i < 0x100 ; ++i  ){
         if( shellcode[i] == '\x00' || shellcode[i] == '\x05' || shellcode[i] == '\x0f'  ){
             puts( "Oops"  );
-            _exit(-1);
+            // _exit(-1);
 
         }
 
