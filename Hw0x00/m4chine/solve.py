@@ -9,7 +9,7 @@ ok = 0
 while ok == 0:
     for char in range(33, 256):
         res += str(char)
-        print('input res is ', str(res))
+        print('input res is ', res.encode())
         p = Popen(['python3', 'machine.py'], stdin = PIPE, stdout = PIPE, stderr = PIPE)
         out = p.communicate(input = res.encode())
         print('out is ', out)
