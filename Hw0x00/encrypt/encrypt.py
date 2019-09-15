@@ -54,7 +54,6 @@ def encrypt(m, key):
 
 if __name__ == '__main__':
     flag = open('flag', 'rb').read()
-    print(len(flag))
     assert(len(flag) == 16)
 
     key = open('key', 'rb').read()
