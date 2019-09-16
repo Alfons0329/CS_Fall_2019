@@ -77,9 +77,4 @@ if __name__ == '__main__':
     for key in range(256):
         decrypted = decrypt(cipher, key)
         fail = 0
-        print('key now ', key)
-        for i in decrypted:
-            if int(i) > 128:
-                fail = 1
-
         print(decrypted)
