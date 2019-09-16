@@ -22,13 +22,13 @@ def inverted_op3(m, p):
     for i in range(len(m)):
         recovered.append(m[p.index(i)]) # search where it originally located
 
-    return recovered
+    return bytes(recovered)
 
 def inverted_op4(m, s):
     recovered = []
     for i in range(len(m)):
-        recovered.append(s.index(int(m[i])))
-    return recovered
+        recovered.append(s.index(m[i]))
+    return bytes(recovered)
 
 '''
 Linear Feedback Shift Register
@@ -76,12 +76,11 @@ if __name__ == '__main__':
 
     for key in range(256):
         decrypted = decrypt(cipher, key)
-        flag = ''
-        flag += str(decrypted[0])
-        flag += str(decrypted[1])
-        flag += str(decrypted[2])
-        flag += str(decrypted[3])
-        flag += str(decrypted[4])
+        fail = 0
+        print('key now ', key)
+        for i in decrypted:
+            if int(i) > 128:
+                fail = 1
 
-        if(flag == 'FLAG{'):
-            print(decrypted)
+        if fail == 0:
+            print(decrypted.decode('ascii'))
