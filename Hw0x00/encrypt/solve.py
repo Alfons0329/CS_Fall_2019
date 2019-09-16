@@ -57,10 +57,10 @@ def stage1(m):
 
     c = m
     for i in range(16):
-        c = op2(c, k)
-        c = inverted_op3(c, p)
         # c = op3(c, p)
         c = inverted_op4(c, s)
+        c = inverted_op3(c, p)
+        c = op2(c, k)
         # c = op4(c, s)
     return c
 
@@ -82,5 +82,4 @@ if __name__ == '__main__':
             if int(i) > 128:
                 fail = 1
 
-        if fail == 0:
-            print(decrypted.decode('ascii'))
+        print(decrypted)
