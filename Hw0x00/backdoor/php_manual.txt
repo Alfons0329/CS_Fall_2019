@@ -1,0 +1,261 @@
+php(1)                        Scripting Language                        php(1)
+
+
+
+NNAAMMEE
+       php - PHP Command Line Interface 'CLI'
+
+       php-cgi - PHP Common Gateway Interface 'CGI' command
+
+SSYYNNOOPPSSIISS
+       pphhpp [options] [ --ff ] _f_i_l_e [[--] _a_r_g_s_._._.]
+
+       pphhpp [options] --rr _c_o_d_e [[--] _a_r_g_s_._._.]
+
+       pphhpp [options] [-B _b_e_g_i_n___c_o_d_e] --RR _c_o_d_e [-E _e_n_d___c_o_d_e] [[--] _a_r_g_s_._._.]
+
+       pphhpp [options] [-B _b_e_g_i_n___c_o_d_e] --FF _f_i_l_e [-E _e_n_d___c_o_d_e] [[--] _a_r_g_s_._._.]
+
+       pphhpp [options] -- [ _a_r_g_s_._._.]
+
+       pphhpp [options] --aa
+
+       pphhpp [options] -S _a_d_d_r_:_p_o_r_t [-t _d_o_c_r_o_o_t]
+
+
+DDEESSCCRRIIPPTTIIOONN
+       PPHHPP  is  a widely-used general-purpose scripting language that is espe-
+       cially suited for Web development and can be embedded into  HTML.  This
+       is the command line interface that enables you to do the following:
+
+       You  can  parse and execute files by using parameter -f followed by the
+       name of the _f_i_l_e to be executed.
+
+       Using parameter -r you can directly execute  PHP  _c_o_d_e  simply  as  you
+       would do inside a ..pphhpp file when using the eevvaall(()) function.
+
+       It  is  also  possible to process the standard input line by line using
+       either the parameter -R or -F. In this mode each  separate  input  line
+       causes  the _c_o_d_e specified by -R or the _f_i_l_e specified by -F to be exe-
+       cuted.  You can access the input line by $$aarrggnn.  While  processing  the
+       input  lines  $$aarrggii  contains  the number of the actual line being pro-
+       cessed. Further more the parameters -B and -E can be  used  to  execute
+       _c_o_d_e  (see  -r)  before  and  after all input lines have been processed
+       respectively. Notice that the input is read from  SSTTDDIINN  and  therefore
+       reading  from  SSTTDDIINN  explicitly  changes  the next input line or skips
+       input lines.
+
+       PHP also contains an built-in web server  for  application  development
+       purpose.  By  using  the  -S  option  where  aaddddrr::ppoorrtt point to a local
+       address and port PHP will listen to HTTP requests on that  address  and
+       port  and serve files from the current working directory or the ddooccrroooott
+       passed by the -t option.
+
+       If none of -r -f -B -R -F -E or -S is present but a single parameter is
+       given then this parameter is taken as the filename to parse and execute
+       (same as with -f). If no parameter is present then the  standard  input
+       is read and executed.
+
+OOPPTTIIOONNSS
+       ----iinntteerraaccttiivvee
+       --aa             Run  PHP  interactively. This lets you enter snippets of
+                      PHP code that directly get executed. When readline  sup-
+                      port  is  enabled  you  can edit the lines and also have
+                      history support.
+
+       ----bbiinnddppaatthh _a_d_d_r_e_s_s_:_p_o_r_t||_p_o_r_t
+       --bb _a_d_d_r_e_s_s_:_p_o_r_t||_p_o_r_t
+                      Bind Path for external FASTCGI Server mode (CGI only).
+
+       ----nnoo--cchhddiirr
+       --CC             Do not chdir to the script's directory (CGI only).
+
+       ----nnoo--hheeaaddeerr
+       --qq             Quiet-mode. Suppress HTTP header output (CGI only).
+
+       ----ttiimmiinngg _c_o_u_n_t
+       --TT _c_o_u_n_t       Measure execution time of script  repeated  count  times
+                      (CGI only).
+
+       ----pphhpp--iinnii _p_a_t_h||_f_i_l_e
+       --cc _p_a_t_h||_f_i_l_e   Look  for  pphhpp..iinnii file in the directory _p_a_t_h or use the
+                      specified _f_i_l_e
+
+       ----nnoo--pphhpp--iinnii
+       --nn             No pphhpp..iinnii file will be used
+
+       ----ddeeffiinnee _f_o_o[[==_b_a_r]]
+       --dd _f_o_o[[==_b_a_r]]   Define INI entry _f_o_o with value _b_a_r
+
+       --ee             Generate extended information for debugger/profiler
+
+       ----ffiillee _f_i_l_e
+       --ff _f_i_l_e        Parse and execute _f_i_l_e
+
+       ----hheellpp
+       --hh             This help
+
+       ----hhiiddee--aarrggss
+       --HH             Hide script name (_f_i_l_e) and  parameters  (_a_r_g_s_._._.)  from
+                      external  tools.  For  example  you may want to use this
+                      when a php script is started as a daemon and the command
+                      line contains sensitive data such as passwords.
+
+       ----iinnffoo
+       --ii             PHP information and configuration
+
+       ----ssyynnttaaxx--cchheecckk
+       --ll             Syntax check only (lint)
+
+       ----mmoodduulleess
+       --mm             Show compiled in modules
+
+       ----rruunn _c_o_d_e
+       --rr _c_o_d_e        Run PHP _c_o_d_e without using script tags ''<<??....??>>''
+
+       ----pprroocceessss--bbeeggiinn _c_o_d_e
+       --BB _b_e_g_i_n___c_o_d_e  Run PHP _b_e_g_i_n___c_o_d_e before processing input lines
+
+       ----pprroocceessss--ccooddee _c_o_d_e
+       --RR _c_o_d_e        Run PHP _c_o_d_e for every input line
+
+       ----pprroocceessss--ffiillee _f_i_l_e
+       --FF _f_i_l_e        Parse and execute _f_i_l_e for every input line
+
+       ----pprroocceessss--eenndd _c_o_d_e
+       --EE _e_n_d___c_o_d_e    Run PHP _e_n_d___c_o_d_e after processing all input lines
+
+       ----ssyynnttaaxx--hhiigghhlliigghhtt
+       --ss             Output HTML syntax highlighted source
+
+       ----sseerrvveerr _a_d_d_r_:_p_o_r_t
+       --SS _a_d_d_r_:_p_o_r_t   Start built-in web server on the given local address and
+                      port
+
+       ----ddooccrroooott _d_o_c_r_o_o_t
+       --tt _d_o_c_r_o_o_t     Specify the document root to be used by the built-in web
+                      server
+
+       ----vveerrssiioonn
+       --vv             Version number
+
+       ----ssttrriipp
+       --ww             Output source with stripped comments and whitespace
+
+       ----zzeenndd--eexxtteennssiioonn _f_i_l_e
+       --zz _f_i_l_e        Load Zend extension _f_i_l_e
+
+       _a_r_g_s_._._.        Arguments  passed  to  script.  Use ''----'' _a_r_g_s when first
+                      argument starts with ''--'' or script is read from stdin
+
+       ----rrffuunnccttiioonn    _n_a_m_e
+       ----rrff           _n_a_m_e Shows information about function nnaammee
+
+       ----rrccllaassss       _n_a_m_e
+       ----rrcc           _n_a_m_e Shows information about class nnaammee
+
+       ----rreexxtteennssiioonn   _n_a_m_e
+       ----rree           _n_a_m_e Shows information about extension nnaammee
+
+       ----rrzzeennddeexxtteennssiioonn
+                      _n_a_m_e
+       ----rrzz           _n_a_m_e Shows information about Zend extension nnaammee
+
+       ----rreexxttiinnffoo     _n_a_m_e
+       ----rrii           _n_a_m_e Shows configuration for extension nnaammee
+
+       ----iinnii          Show configuration file names
+
+FFIILLEESS
+       pphhpp--ccllii..iinnii    The configuration file for the CLI version of PHP.
+
+       pphhpp..iinnii        The standard configuration file will only be  used  when
+                      pphhpp--ccllii..iinnii cannot be found.
+
+EEXXAAMMPPLLEESS
+       _p_h_p _-_r _'_e_c_h_o _"_H_e_l_l_o _W_o_r_l_d_\_n_"_;_'
+            This command simply writes the text "Hello World" to standard out.
+
+       _p_h_p _-_r _'_p_r_i_n_t___r_(_g_d___i_n_f_o_(_)_)_;_'
+            This shows the configuration of your gd  extension.  You  can  use
+            this  to easily check which image formats you can use. If you have
+            any dynamic modules you may want to use the same ini file that php
+            uses  when executed from your webserver. There are more extensions
+            which have such a function. For dba use:
+            _p_h_p _-_r _'_p_r_i_n_t___r_(_d_b_a___h_a_n_d_l_e_r_s_(_1_)_)_;_'
+
+       _p_h_p _-_R _'_e_c_h_o _s_t_r_i_p___t_a_g_s_(_$_a_r_g_n_)_._"_\_n_"_;_'
+            This PHP command strips off the HTML tags line by line and outputs
+            the  result. To see how it works you can first look at the follow-
+            ing PHP command '_p_h_p _-_d _h_t_m_l___e_r_r_o_r_s_=_1 _-_i' which uses PHP to output
+            HTML  formatted  configuration  information.  If  you then combine
+            those two '_p_h_p _._._._|_p_h_p _._._.' you'll see what happens.
+
+       _p_h_p _-_E _'_e_c_h_o _"_L_i_n_e_s_: _$_a_r_g_i_\_n_"_;_'
+            Using this PHP command you can count the lines being input.
+
+       _p_h_p _-_R _'_@_$_l_+_=_c_o_u_n_t_(_f_i_l_e_(_$_a_r_g_n_)_)_;_' _-_E _'_e_c_h_o _"_L_i_n_e_s_:_$_l_\_n_"_;_'
+            In this example PHP expects each  input  line  being  a  file.  It
+            counts  all  lines  of  the files specified by each input line and
+            shows the summarized result.  You may combine this with tools like
+            find and change the php scriptlet.
+
+       _p_h_p _-_R _'_e_c_h_o _"_$_a_r_g_n_\_n_"_; _f_g_e_t_s_(_S_T_D_I_N_)_;_'
+            Since you have access to STDIN from within -B -R -F and -E you can
+            skip certain input lines with your code. But  note  that  in  such
+            cases  $argi  only counts the lines being processed by php itself.
+            Having read this you will guess what the above program does: skip-
+            ping every second input line.
+
+TTIIPPSS
+       You  can  use  a shebang line to automatically invoke php from scripts.
+       Only the CLI version of PHP will ignore such  a  first  line  as  shown
+       below:
+
+              #!/bin/php
+              <?php
+               // your script
+              ?>
+
+
+SSEEEE AALLSSOO
+       For a more or less complete description of PHP look here:
+       hhttttpp::////wwwwww..pphhpp..nneett//mmaannuuaall//
+
+
+BBUUGGSS
+       You can view the list of known bugs or report any new bug you found at:
+       hhttttpp::////bbuuggss..pphhpp..nneett
+
+AAUUTTHHOORRSS
+       The PHP Group: Thies C. Arntzen, Stig Bakken, Andi Gutmans, Rasmus Ler-
+       dorf,  Sam  Ruby,  Sascha  Schumann, Zeev Suraski, Jim Winstead, Andrei
+       Zmievski.
+
+       Additional work for the CLI sapi was done by  Edin  Kadribasic,  Marcus
+       Boerger and Johannes Schlueter.
+
+       A List of active developers can be found here:
+       hhttttpp::////wwwwww..pphhpp..nneett//ccrreeddiittss..pphhpp
+
+       And last but not least PHP was developed with the help of a huge amount
+       of contributors all around the world.
+
+VVEERRSSIIOONN IINNFFOORRMMAATTIIOONN
+       This manpage describes pphhpp, version 7.1.23.
+
+CCOOPPYYRRIIGGHHTT
+       Copyright (C) 1997-2018 The PHP Group
+
+       This source file is subject to version 3.01 of the PHP license, that is
+       bundled with this package in the file LICENSE, and is available through
+       the world-wide-web at the following url:
+       hhttttpp::////wwwwww..pphhpp..nneett//lliicceennssee//33__0011..ttxxtt
+
+       If you did not receive a copy of the PHP  license  and  are  unable  to
+       obtain   it   through   the  world-wide-web,  please  send  a  note  to
+       lliicceennssee@@pphhpp..nneett so we can mail you a copy immediately.
+
+
+
+The PHP Group                        2018                               php(1)
