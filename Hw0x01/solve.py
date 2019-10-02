@@ -6,5 +6,6 @@ password = ''
 for i in range(len(checker1)):
     password += chr(ord(str(checker1[i])) ^ ord(str(checker2[i])))
 
+#print(checker1)
 print(password)
 
