@@ -6,4 +6,5 @@ flag_final = ''
 for i in flag_encoded2:
     flag_final += chr((ord(str(i)) ^ 0x66) - 0x23)
 
+print(16)
 print(flag_final)
