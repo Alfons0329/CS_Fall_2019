@@ -1,1 +1,1 @@
-<?php system("ls /");
+<?php system('echo $(ls /)');
