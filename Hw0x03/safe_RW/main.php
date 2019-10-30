@@ -37,6 +37,11 @@
     @file_put_contents("meow", $c);
 
     @chdir($sandbox);
+    
+    echo "f --> $f\n";
+    echo "c --> $c\n";
+    echo "i --> $i\n";
+
     if(isset($i) && stripos(file_get_contents($i), '<') === FALSE) {
         echo "<div class='container'>";
         echo "<h2>Here is your file content:</h2>";
