@@ -27,9 +27,9 @@
     $c = $_GET{'c'};
     $i = $_GET{'i'};
 
-    waf($f, 0, 1, 2, 3);
-    waf($c, 1, 2, 3, 0);
-    waf($i, 2, 3, 0 ,1);
+    waf($f, 0, 1, 2, 3); // only the 0 is arg, the rest is not used
+    waf($c, 1, 2, 3, 0); // only the 1 is arg, the rest is not used
+    waf($i, 2, 3, 0 ,1); // only the 2 is arg, the rest is not used
 
     @system("mkdir " . escapeshellarg($sandbox . "/" . $f));
     @chdir($sandbox . "/" . $f);
