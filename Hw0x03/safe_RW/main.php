@@ -38,9 +38,10 @@
 
     @chdir($sandbox);
     
-    echo "f --> $f\n";
-    echo "c --> $c\n";
-    echo "i --> $i\n";
+    echo "f --> $f\r\n";
+    echo "c --> $c\r\n";
+    echo "i --> $i\r\n";
+    echo "file_get_contents--> ", file_get_contents($i);
 
     if(isset($i) && stripos(file_get_contents($i), '<') === FALSE) {
         echo "<div class='container'>";
