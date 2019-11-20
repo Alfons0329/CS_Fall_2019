@@ -71,9 +71,13 @@ int main(){
     puts( "Show me your passport." );
     printf( "Your name: " );
     read( 0 , name , 0x100 );
+    // dbg
+    printf("get name %s \n", name);
 
     printf( "Your age: " );
-    age = read_int();
+    // age = read_int();
+    scanf("%d", &age);
+    printf("get age %d \n", age);
 
     if( age < 20 ){
         puts( "You can not enter the casino!" );
