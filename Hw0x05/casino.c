@@ -73,6 +73,7 @@ int main(){
     read( 0 , name , 0x100 );
     // dbg
     printf("get name %s \n", name);
+    printf("get seed %d ", seed);
 
     printf( "Your age: " );
     // age = read_int();
