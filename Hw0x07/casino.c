@@ -2,7 +2,6 @@
 #include<stdlib.h>
 #include<fcntl.h>
 
-
 int lottery[6] = {0}, guess[6] = {0};
 char name[0x10] = {0};
 int age, seed;
