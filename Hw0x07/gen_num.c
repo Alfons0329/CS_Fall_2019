@@ -4,7 +4,7 @@
 
 int main() {
     // int seed = time(0);
-    int seed = 0x0;
+    int seed = 0x601ff0;
     srand(seed);
     for(int i = 0; i < 6; i++){
         int rand_num = rand() % 100;
