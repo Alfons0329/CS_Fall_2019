@@ -1,32 +1,12 @@
-#
-# Ubuntu Dockerfile
-#
-# https://github.com/dockerfile/ubuntu
-#
-
-# Pull base image.
 FROM ubuntu:16.04
-
-# Install.
-RUN \
-  sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
-  apt-get update && \
-  apt-get -y upgrade && \
-  apt-get install -y build-essential && \
-  apt-get install -y software-properties-common && \
-  apt-get install -y byobu curl git htop man unzip vim wget && \
-  rm -rf /var/lib/apt/lists/*
-
-# Add files.
-ADD root/.bashrc /root/.bashrc
-ADD root/.gitconfig /root/.gitconfig
-ADD root/.scripts /root/.scripts
-
-# Set environment variables.
-ENV HOME /root
-
-# Define working directory.
-WORKDIR /root
-
-# Define default command.
-CMD ["bash"]
+#Credit to TA yuawn
+MAINTAINER yuawn
+RUN sed -i 's/\(archive.ubuntu\|security.ubuntu\)/tw.archive.ubuntu/' /etc/apt/sources.list && apt-get update
+RUN apt-get install -y openssh-server && mkdir /var/run/sshd
+RUN apt-get install -y sudo && sed -i 's/%sudo.*/%sudo   ALL=(ALL:ALL) NOPASSWD:ALL/' /etc/sudoers
+RUN apt-get install -y locales && (echo 149; echo 3) | dpkg-reconfigure locales
+RUN apt-get install -y tmux binutils gdb strace ltrace nmap netcat vim
+RUN apt-get install -y python2.7 python-pip python-dev git libssl-dev libffi-dev build-essential
+RUN pip install --upgrade pwntools
+RUN useradd -m yuawn && usermod -aG sudo yuawn && echo /bin/bash | chsh yuawn
+CMD ["/usr/sbin/sshd", "-D"]
