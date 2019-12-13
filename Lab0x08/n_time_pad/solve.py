@@ -20,10 +20,7 @@ while True:
         tmp_result.append(xor_all(each, flag))
         print(tmp_result[-1])
 
-    select_idx = input('plain text --> select index [0, %d]: '%(len(tmp_result) - 1))
-    plain_text = tmp_result[int(select_idx)]
-
-    print('selected plain text --> ', plain_text)
+    select_idx = input('cipher text --> select index [0, %d]: '%(len(content) - 1))
     plain_text = input('new plain text --> ')
-    flag = xor_all(content[0], plain_text)[0: len(plain_text)]
+    flag = xor_all(content[int(select_idx)], plain_text)
     print('updated flag --> ', flag)
