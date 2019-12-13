@@ -7,12 +7,16 @@ with open('cipher') as f:
 with open('plain') as f:
     plain = f.read()
 
+
+flag = 'FLAG{D0_u_know_One-Time-Pad\'s_md5_'
+content = [str(i.strip()) for i in content]
 cipher = ''
 for i in content:
     cipher += i
 
-flag = 'FLAG{D0_u_know_One-Time-Pad\'s_md5_'
-content = [str(i.strip()) for i in content]
+print(xor_all(cipher[0: 150], plain[0: 75]), '|<--')
+exit()
+
 while True:
 
     tmp_result = []

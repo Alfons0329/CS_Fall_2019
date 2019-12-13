@@ -19,6 +19,8 @@ def xor_all(cipher, xor_key):
     cipher_len = len(cipher)
     key_len = len(xor_key)
 
+    print(cipher_len, key_len)
+
     if cipher_len > key_len:
         cipher = cipher[0: key_len]
     else:
