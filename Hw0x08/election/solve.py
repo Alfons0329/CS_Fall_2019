@@ -42,9 +42,14 @@ def buf_canary():
     print('Done: --> ', r.recv())
 
     # quit voting --> SIGABRT occurred
+    pause()
     r.sendline('3')
     print(r.recv())
 
+canary = ''
+guess = 0
+def hack_canary():
+    return 0
 
 def main():
     for token_cnt in range(0, 25):
