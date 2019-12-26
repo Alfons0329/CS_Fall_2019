@@ -110,3 +110,46 @@ def rop_shell(canary, base, libc_base):
     rbp = p64(rbp)`
 
 ## Note++ (pwn heap)
+
+### Step 1: Use unsorted bin to leak the libc base.
+* There is an overflow point if we allocate size 0 for Note, due to `unsigned int` type, the message of note can be arbitrary long, thus bypass the checking of `size > 0x78` and make a chunk for the size of unsorted bin.
+![](https://i.imgur.com/VprUZKD.png)
+
+* And we have unsorted bin for leaking libc_base.
+![](https://i.imgur.com/1tNASRA.png)
+
+### Step 2: Use fastbin attack to create space for fake chunk
+* Create the fastbin chain.
+
+![](https://i.imgur.com/29qXK3z.png)
+
+![](https://i.imgur.com/KWhCOjX.png)
+
+### Step 3: Write one_gadget payloads into `__malloc_hook` 
+* Don't forget to shift 0x13 to padding for 0x7f, i.e. **the legal size header for fastbin!**.
+
+![](https://i.imgur.com/MA8Wt2M.png)
+
+* Choose one gadget.
+```
+0xf02a4 execve("/bin/sh", rsp+0x50, environ)
+[rsp+0x50] == NULL
+```
+
+* PWN while error message is generated!
+
+![](https://i.imgur.com/kkxtzL2.png)
+
+* Finally flag!
+![](https://i.imgur.com/p8FlKLg.png)
+
+### Some pitfalls to avoid.
+* Must malloc the size that can round up to 0x70 for fake chunk exploit.
+    * Reason: In the fake memory chunk for exploiting `__malloc_hook`, by shifting `- 0x13`, we get `0x0000007f` as the chunk size header, which is legal for fast bin. Other than 0x7f, the final allocation for one_gadget will crashed.
+
+![](https://i.imgur.com/jBA07KQ.png)
+
+![](https://i.imgur.com/AWiuc3G.png)
+
+
+
