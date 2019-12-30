@@ -80,11 +80,6 @@ def main():
             for j in range(i + 1, block_size):
                 prev_cipher_block_bytes[j] = cur_block_decrypted_bytes[j] ^ padding_guess
 
-            print('pcbb', prev_cipher_block_bytes)
-            print('cbdb', cur_block_decrypted_bytes)
-            print('padding guess ', padding_guess)
-
-            pause()
             original_cipher_byte = prev_cipher_block_bytes[i]
             for search in range(256):
                 prev_cipher_block_bytes[i] = search
