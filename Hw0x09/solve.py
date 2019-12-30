@@ -49,7 +49,7 @@ def main():
 
     # splitting them into 6 blocks
     block_size = 16
-    block_cnt = len(flag_cipher) // block_size
+    num_total_blocks = len(flag_cipher) // block_size
     flag_cipher_blocks = []
     for i in range(0, len(flag_cipher), block_size):
         flag_cipher_blocks.append(flag_cipher[i:i + block_size])
@@ -58,7 +58,7 @@ def main():
 
     # decrypt using cur block and prev block
     # idx low [prev_block | this block] idx high
-    for block_idx in reversed(range(1, block_cnt)):
+    for block_idx in reversed(range(1, num_total_blocks)):
         prev_cipher_block = flag_cipher_blocks[block_idx - 1]
         prev_cipher_block_bytes = list(prev_cipher_block) # in the byte representation form
 
@@ -71,15 +71,20 @@ def main():
             prev_cipher_block_bytes = list(prev_cipher_block)
 
             # last block as special case
-            if block_idx == block_cnt - 1:
+            if block_idx == num_total_blocks - 1:
                 if (i != block_size - 1 and i >= block_size - cur_block_plain_bytes[-1]):
                     cur_block_decrypted_bytes[i] = prev_cipher_block_bytes[i] ^ cur_block_plain_bytes[i]
                     continue
 
-            # XOR prev blocks, i.e. i + 1 to block
+            # XOR prev blocks, i.e. from i + 1 to block_size
             for j in range(i + 1, block_size):
                 prev_cipher_block_bytes[j] = cur_block_decrypted_bytes[j] ^ padding_guess
 
+            print('pcbb', prev_cipher_block_bytes)
+            print('cbdb', cur_block_decrypted_bytes)
+            print('padding guess ', padding_guess)
+
+            pause()
             original_cipher_byte = prev_cipher_block_bytes[i]
             for search in range(256):
                 prev_cipher_block_bytes[i] = search
@@ -87,7 +92,7 @@ def main():
                 + bytes(prev_cipher_block_bytes) \
                 + flag_cipher_blocks[block_idx]
 
-                # the padding is correct, no need to guess anymore
+                # the padding is correct, no need to guess anymore (try to match correctly with padding)
                 if interact_with_site(session, urlencode(base64.b64encode(guess_flag_cipher).decode())) == WRONG_FLAG_CORRECT_PADDING:
                     cur_block_decrypted_bytes[i] = search ^ padding_guess
                     cur_block_plain_bytes[i] =  original_cipher_byte ^ cur_block_decrypted_bytes[i]
