@@ -1,4 +1,4 @@
-# python 2.7 for better compatibility, step corresponding to writeup.md
+#!/usr/bin/env python2
 from pwn import *
 
 context.clear(arch='x86_64')

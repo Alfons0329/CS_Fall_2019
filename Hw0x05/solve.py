@@ -1,4 +1,4 @@
-# Please run with python2.7 for better compatibility
+# #!/usr/bin/env python3
 from pwn import *
 
 # shellcode

@@ -1,4 +1,4 @@
-# Please run with python2.7 for better compatibility
+#!/usr/bin/env python2
 from pwn import *
 
 context.clear(arch='x86_64')

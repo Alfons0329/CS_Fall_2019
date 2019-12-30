@@ -1,4 +1,4 @@
-# env = python 3.7.5
+#!/usr/bin/env python3
 import urllib, requests, socket
 import os
 import pickle, redis
