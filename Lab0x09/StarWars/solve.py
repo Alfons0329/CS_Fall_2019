@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# self note: doing on .58 TITAN V x 2 machine will be fine, pip3 of .24 is corrupted
 from pwn import *
 from Crypto.Util.number import *
 import math
@@ -16,20 +17,26 @@ def pollard(n):
 
         b += 1
 
-# Use pollard p - 1 for RSA forging
+# use pollard p - 1 for RSA forging
 r.sendlineafter('>', '1')
-c = r.recvline()
-e = r.recvline()
-n = r.recvline()
+c = r.recvline().split()[-1]
+e = r.recvline().split()[-1]
+n = r.recvline().split()[-1]
 print('received c ', c, ' e ', e, ' n ', n)
 
-p = pollard(long(n))
+# some required type conversion
+c = int(c)
+e = int(e)
+n = int(n)
+p = pollard(n)
 q = n // p
 
-r = (p - 1) * (q - 1)# by Eular's totient function
-d = inverse(e ,r) # modinv of e to r
+phi_n = (p - 1) * (q - 1)# by Eular's totient function
+d = inverse(e ,phi_n) # modinv of e to r
 
-# To decrypt, use c
+# to decrypt, use c
 m = pow(c ,d, n)
-r.sendlineafter('>', '2')
-r.sendline(long_to_bytes(m))
+
+print('n ', n)
+print('p ', p)
+print('FLAG --> ', long_to_bytes(m))
