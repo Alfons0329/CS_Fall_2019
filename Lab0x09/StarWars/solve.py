@@ -22,7 +22,6 @@ r.sendlineafter('>', '1')
 c = r.recvline().split()[-1]
 e = r.recvline().split()[-1]
 n = r.recvline().split()[-1]
-print('received c ', c, ' e ', e, ' n ', n)
 
 # some required type conversion
 c = int(c)
@@ -33,6 +32,7 @@ q = n // p
 
 phi_n = (p - 1) * (q - 1)# by Eular's totient function
 d = inverse(e ,phi_n) # modinv of e to r
+print(d * e % phi_n)
 
 # to decrypt, use c
 m = pow(c ,d, n)

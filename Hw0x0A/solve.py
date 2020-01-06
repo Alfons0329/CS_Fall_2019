@@ -59,14 +59,15 @@ while try_cnt < 1024 // 4:
             continuous_padding += 1
     else:
         continuous_padding = 0
-    
+
     flag_list.append(xi)
-    # make flag_res grow bigger, ex: x2x1x0 will be mod ** 2 * x2 + mod ** 1 * x1 + mod ** 0 8 x0 (just like naive method for turning 0x7FB to 2043) 
+    # make flag_res grow bigger, ex: x2x1x0 will be mod ** 2 * x2 + mod ** 1 * x1 + mod ** 0 8 x0 (just like naive method for turning 0x7FB to 2043)
     flag_res = (((MOD ** pow_cnt) % n * xi) %n + flag_res) % n
+    print(hex(flag_res))
     pow_cnt += 1
     try_cnt += 1
 
-print(flag_res)
+print(hex(flag_res))
 flag_res = bytes.fromhex(str(hex(flag_res))[2:])
 for i in flag_res:
     print(chr(int(i)), end='')
