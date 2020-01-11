@@ -19,6 +19,10 @@ c = rem.recvline(keepends=False).split()[-1]
 n = int(n)
 e = int(e)
 c = int(c, 16)
+print('n ', n)
+print('e ', e)
+print('c ', c)
+
 x = 2
 mul = pow(x, e, n)
 y = c * mul % n
