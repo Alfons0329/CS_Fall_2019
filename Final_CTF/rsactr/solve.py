@@ -19,11 +19,14 @@ c = int.from_bytes(c, 'little')
 x = 2
 y = (c * (x ** e)) % n
 
-y = bytes.fromhex(str(hex(y))[2:])
-print(y)
+# y = bytes.fromhex(str(hex(y))[2:])
 rem.sendlineafter('>', '3')
-rem.sendlineafter('plain = ', y)
-# z = rem.recvline(keepends=False).split()[-1]
-z = rem.recvall()
-print(z)
-rem.interactive()
+rem.sendlineafter('= ', str(y))
+z = rem.recvline(keepends=False).split()[-1]
+z = int.from_bytes(z, 'little')
+x_inv = inverse(x, n)
+
+p = (z * x_inv) % n
+p = bytes.fromhex(str(hex(p))[2:])
+for i in p:
+        print(chr(int(i)), end='')
