@@ -1,7 +1,13 @@
 from Crypto.Util.number import *
+from Crypto.PublicKey import RSA
 from pwn import *
+from multiprocessing import Pool
+
 import base64, sys, os, binascii
 import struct
+import gmpy2
+
+import RSAwienerHacker
 
 rem = remote('eductf.zoolab.org', 20000)
 # rem = process('./server.py', 20000)
@@ -15,28 +21,13 @@ e = rem.recvline(keepends=False).split()[-1]
 rem.sendlineafter('>', '2')
 c = rem.recvline(keepends=False).split()[-1]
 
-# y = c * x ^ e mod n
 n = int(n)
 e = int(e)
-c = hex(int(c, 16))
-print('n = ', n)
-print('e = ', e)
-print('c = ', c)
-exit()
+c = int(c, 16)
 
-x = 2
-mul = pow(x, e, n)
-y = c * mul % n
-y = inverse(y, n) % n
+print('n ', n)
+print('e ', e)
+print('c ', c)
 
-# y = bytes.fromhex(str(hex(y))[2:])
-rem.sendlineafter('>', '3')
-rem.sendlineafter('= ', str(y))
-z = rem.recvline(keepends=False).split()[-1]
-z = int.from_bytes(z, 'little')
-x_inv = inverse(x, n)
-
-p = (z * x_inv) % n
-p = bytes.fromhex(str(hex(p))[2:])
-for i in p:
-    print(chr(int(i)), end='')
+d = RSAwienerHacker.hack_RSA(e, n)
+print('d = ', d)
