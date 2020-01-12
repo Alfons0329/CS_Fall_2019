@@ -12,6 +12,16 @@ def genkeys():
         n, phi = p * q, (p - 1) * (q - 1)
         if GCD(e, phi) == 1:
             d = inverse(e, phi)
+            print('n')
+            print(n)
+            print('p')
+            print(p)
+            print('q')
+            print(q)
+            print('d')
+            print(d)
+            print('e')
+            print(e)
             return (n, e), (n, d)
 
 class RSA:

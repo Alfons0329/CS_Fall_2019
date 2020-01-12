@@ -18,12 +18,12 @@ c = rem.recvline(keepends=False).split()[-1]
 # y = c * x ^ e mod n
 n = int(n)
 e = int(e)
-c = hex(int(c, 16))
+c = int(c, 16)
 print('n = ', n)
 print('e = ', e)
 print('c = ', c)
-exit()
 
+'''
 x = 2
 mul = pow(x, e, n)
 y = c * mul % n
@@ -38,5 +38,6 @@ x_inv = inverse(x, n)
 
 p = (z * x_inv) % n
 p = bytes.fromhex(str(hex(p))[2:])
+'''
 for i in p:
     print(chr(int(i)), end='')
