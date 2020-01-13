@@ -12,6 +12,7 @@ def genkeys():
         n, phi = p * q, (p - 1) * (q - 1)
         if GCD(e, phi) == 1:
             d = inverse(e, phi)
+            '''
             print('n')
             print(n)
             print('p')
@@ -22,6 +23,7 @@ def genkeys():
             print(d)
             print('e')
             print(e)
+            '''
             return (n, e), (n, d)
 
 class RSA:
@@ -46,19 +48,20 @@ class RSA:
             blocksize = 16
             cipher = b''
             print('your plain ', plain, 'len ', len(plain))
+            print('n ', n)
             for i in range(0, len(plain), blocksize):
                 x = self.nonce
                 y = pow(x, d, n)
                 z = (y + bytes_to_long(plain[i:i+blocksize])) % n
                 cipher += z.to_bytes(128, 'big')
                 print('x ', x)
-                print('nonce ', self.nonce)
-                print('d ', d)
-                print('n ', n)
                 print('y ', y)
+                print('delta ', bytes_to_long(plain[i:i+blocksize]), ' = ', plain[i:i+blocksize])
                 print('z ', z)
-                print('cipher ', cipher)
+                print('cipher ', cipher, '\n')
                 self.nonce += 2020 # 2020 happy new year
+
+            print('final cipher', bytes_to_long(cipher))
             return cipher
         else:
             raise NotImplementedError
