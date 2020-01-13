@@ -3,41 +3,13 @@ from pwn import *
 import base64, sys, os, binascii
 import struct
 
-rem = remote('eductf.zoolab.org', 20000)
-# rem = process('./server.py', 20000)
-rem.sendlineafter('>', '1')
+e = 3
+n = 104227340641912921061166557367944040308152558388758138147795777757925750602029670844632107534672362100564257310597273362713915493042672355863342330737076888293617807382844909042313541961498852786861910852345099946568058636515135617644704694901719153686645087521000900537648347112075203002741268322995070164567
 
-# get public key pair, (n, e)
-n = rem.recvline(keepends=False).split()[-1]
-e = rem.recvline(keepends=False).split()[-1]
+cipher = b'\x85\xa8@\x943}e\x80\xe7\xbb9\x91\xcd-On-\x0c{kJ\xb2\x83\xd94B\xd2\xf7\xb6I2@c\x0f\xb6Qc\xb5m\xa9\xc1\xb5\xf1\x11\x15\xb6\x12\xd5%\x13\xfc9\x94}\xa7\xab\xe5\x95\xc0\xb27\xe9p<\x95\x95\x17\x85\xed\x1f\x8b\x0b\x8f\xc3\xfa\xfb\xd9y\x0f\xf7\xbb\x0e[\xf6\xfb/\xaab<&3c\xb4\x16[\x7f\xcc\xf7V-\xe6\xd0@\xdc`\xf9hj\xff\xd1\xff\xd4.\x1a\xe9\xef\xaa\x00\xe1j\xa5\xe0K\x1c\x80!L\xd9'
+cipher_long = bytes_to_long(cipher)
 
-# get c, the cipher text wanna attacking
-rem.sendlineafter('>', '2')
-c = rem.recvline(keepends=False).split()[-1]
+print('nonce ', pow(cipher_long, e, n))
 
-# y = c * x ^ e mod n
-n = int(n)
-e = int(e)
-c = int(c, 16)
-print('n = ', n)
-print('e = ', e)
-print('c = ', c)
-
-'''
-x = 2
-mul = pow(x, e, n)
-y = c * mul % n
-y = inverse(y, n) % n
-
-# y = bytes.fromhex(str(hex(y))[2:])
-rem.sendlineafter('>', '3')
-rem.sendlineafter('= ', str(y))
-z = rem.recvline(keepends=False).split()[-1]
-z = int.from_bytes(z, 'little')
-x_inv = inverse(x, n)
-
-p = (z * x_inv) % n
-p = bytes.fromhex(str(hex(p))[2:])
-'''
-for i in p:
-    print(chr(int(i)), end='')
+flag_enc =
+0x44fdd1ace499d571734f69405153feaf42dfb606db9de03dd70cf5e9282d6f6422a92544c7d0fd193ddad9de18ecb31313bfae63fb6b39f872fc777d713160d3d4ac7ec34ecf1195ee1c12fe81bba02bc9d27c5b17e528110a46c1da05f962e6437013df4f0215107b014fdfd08a1562fb90168184421308bc17c212d91c40305cc3e85e132ddef5ed94a6d03a50e2aa73637e72f283c27cbe75935ce799df7cd587a04374f521bf081ba43ef46df7d77611fbe82e6f53a034a7a3081a1d579069bcbfb4d3c767d8f55ca3730f386db62a8bb7c7e8b350a5f33cd6e2ca8e7104cdb0c943d2be8f5955319d1ee4a87524ac1944edbbd15be29c3ae300bd0efcad852580e58e1b753113e36eb6b91fad3e0fe78c7bf4e4c88eb3a4a815a1a4fc1d63bf58bb472f4c426fce0446cac6339818278a89ed2d6fd9ea1dd57960aa0e067b2de8249a2c2033109976fc528834d010e36caaf170a3fd7bad6162e2229848842a5b0ec2de51b655839f60eba3cc8fce418d86b1726e4f5eef8f59cd928d63
