@@ -45,11 +45,19 @@ class RSA:
             n, d = self.key
             blocksize = 16
             cipher = b''
+            print('your plain ', plain, 'len ', len(plain))
             for i in range(0, len(plain), blocksize):
                 x = self.nonce
                 y = pow(x, d, n)
                 z = (y + bytes_to_long(plain[i:i+blocksize])) % n
                 cipher += z.to_bytes(128, 'big')
+                print('x ', x)
+                print('nonce ', self.nonce)
+                print('d ', d)
+                print('n ', n)
+                print('y ', y)
+                print('z ', z)
+                print('cipher ', cipher)
                 self.nonce += 2020 # 2020 happy new year
             return cipher
         else:
