@@ -18,6 +18,9 @@ Course website [here](https://edu-ctf.csie.org/)
 * Except the last Hw0x0B have not solved, the rest have got `FLAG{*}`, please view the corresponding folder `Hw0x*/README.md` for writeup
 * 作業0x0B沒有寫以外，其他作業皆有正確解出`FLAG{*}`，請參閱個次作業的資料夾以閱覽writeup
 
+ID: `alfons0329`
+![](finalscore.png)
+
 | Hw                     | Type                                 | Score Point |
 | ---------------------- | ------------------------------------ | ----------- |
 | 0x00                   | All                                  | 50/each     |
