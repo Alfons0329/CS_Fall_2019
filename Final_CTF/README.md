@@ -1,5 +1,5 @@
 # AIS3 EOF CTF Qual, Team: K0reanF15h Writeup
-Ranking: 21/82 
+Ranking: 21/82 (14/75 if 7 TA teams is deducted)
 
 ###### tags: `CTF` `Writeup`
 ## Solved problems
