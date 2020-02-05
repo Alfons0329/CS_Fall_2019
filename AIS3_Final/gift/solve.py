@@ -12,14 +12,20 @@ while True:
 
     cmd = 'strings ' + name + ' > tmp.txt'
     print('cmd1 ', cmd)
+    os.system(cmd)
+    contents = []
     content = ''
     with open('tmp.txt') as f:
-        content = f.readlines()
-        content = content[24]
-        print('content ', content)
+        contents = f.readlines()
+        for i in contents:
+            if len(i) > 250:
+                content = i
+                break
+
     f.close()
 
     f = open('in.txt', 'w')
+    print('write ', content)
     f.write(content)
     f.close()
 
@@ -32,7 +38,8 @@ while True:
     print('cmd3 ', cmd)
     os.system(cmd)
 
-    cmd = 'extract ' + 'out_' + str(cnt) + '.gz'
+    cmd = 'gunzip ' + 'out_' + str(cnt) + '.gz -f'
     print('cmd4 ', cmd)
-    pause()
     os.system(cmd)
+
+    input()
